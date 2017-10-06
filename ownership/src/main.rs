@@ -10,7 +10,7 @@ fn main() {
 
     println!("s1: {}, s2: {}", s1, s2);
 
-    let x = "hi";
+    let x : &str = "hi";
     let y = x;
 
     let x2 = 10;
@@ -37,7 +37,31 @@ fn main() {
 
     // No dangling refs
     let good_ref = get_ref();
-    println!("{}",good_ref)
+    println!("{}",good_ref);
+
+    let p : &str = "asfs";
+    let d = (1,2);
+
+    // Slices
+    // Return the first word in a string
+    // Range using <a>..<b> where inclusive a -> exclusive b
+    let mut f = String::from("Hello World");
+    let hello = &f[0..5]; println!("{}", hello);
+    let world = &f[6..11]; println!("{}", world);
+    let hello2 = &f[..5]; println!("{}", hello2);
+    let world2 = &f[6..]; println!("{}", world2);
+    let hello_world = &f[..]; println!("{}", hello_world);
+    println!("First word of 'Hello World': {}",get_first_word(&f));
+    let firstword = get_first_word(&f);
+
+    // Cannot take a mutable ref since it's there's an immutable reference in the same scope
+    // f.clear();
+
+    // String literals are immutable references (slices)
+    let g = String::from("Hello World");
+    println!("{}", &g[..]);
+    let h = "Hello World";
+    println!("{}", h);
 
 }
 
@@ -85,3 +109,36 @@ fn get_ref() -> String
     s
 }
 
+fn get_first_word(s : &String) -> &str
+{
+    // as_bytes returns an array of bytes (8 bits)
+    let bytes : &[u8] = s.as_bytes();
+
+    // enumerate will return a tuple (index, item_ref)
+    for (i, &item) in bytes.iter().enumerate()
+    {
+        // look for a byte space
+        if item == b' '
+        {
+            return &s[..i]
+        }
+    }
+    &s[..]
+}
+
+fn get_first_word2(s : &str) -> &str
+{
+    // as_bytes returns an array of bytes (8 bits)
+    let bytes : &[u8] = s.as_bytes();
+
+    // enumerate will return a tuple (index, item_ref)
+    for (i, &item) in bytes.iter().enumerate()
+        {
+            // look for a byte space
+            if item == b' '
+                {
+                    return &s[..i]
+                }
+        }
+    &s[..]
+}
