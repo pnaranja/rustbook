@@ -56,6 +56,11 @@ fn main() {
 
     let square = Rectangle2::square(50);
     println!("Size of the square is {:?}", square);
+
+
+    // Rust 1.20 now has associated consts
+    println!("Rectangle2 constant: {}", Rectangle2::rect_const);
+
 }
 
 // Field init shorthand
@@ -109,4 +114,7 @@ impl Rectangle2{
     fn square(size : u32) -> Rectangle2{
         Rectangle2{length: size, width: size}
     }
+
+    // Rust 1.20 now has associated consts
+    const rect_const : u32 = 50;
 }
