@@ -52,8 +52,10 @@ fn main() {
 
     let rect3 = Rectangle2{length:50, width:100};
     println!("Can rect2 hold rect3? {}", rect2.can_hold(&rect3));
-    println!("Can rect3 hold rect2? {}", rect3.can_hold(&rect2))
+    println!("Can rect3 hold rect2? {}", rect3.can_hold(&rect2));
 
+    let square = Rectangle2::square(50);
+    println!("Size of the square is {:?}", square);
 }
 
 // Field init shorthand
@@ -99,5 +101,12 @@ impl Rectangle2{
 
     fn can_hold(&self, other_rect : &Rectangle2) -> bool{
         (self.width > other_rect.width) && (self.length > other_rect.length)
+    }
+
+    // Associated function
+    // Functions that do not have self as parameter
+    // Like a Java static method
+    fn square(size : u32) -> Rectangle2{
+        Rectangle2{length: size, width: size}
     }
 }
