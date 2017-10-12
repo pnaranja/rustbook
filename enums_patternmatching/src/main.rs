@@ -33,6 +33,8 @@ impl Message{
     }
 }
 
+enum Coin{Penny, Nickel, Dime, Quarter, HalfDollar}
+
 fn main() {
     let ip4 = IpAddrKind::V4;
     let ip6 = IpAddrKind::V6;
@@ -58,11 +60,47 @@ fn main() {
     let a_b = mul(a,b);
 
     println!("a * a2 = {:?}",a_a2);
-    println!("a * b = {:?}",a_b)
+    println!("a * b = {:?}",a_b);
+
+    // Match
+    println!("A quarter in cents is {}", value_in_cents(Coin::Quarter));
+    println!("A half dollar in cents is {}", value_in_cents(Coin::HalfDollar));
+    println!("4 * 2 = {}", times_two(Some(4)).expect("Invalid number"));
+//    println!("4 * None = {}", times_two(None).expect("Cannot mutiply 4 with None"));
+    println!("4 * 5 = {}", times_five(Some(4)).unwrap_or(0));
+
+
 }
 
 fn mul(a : Option<i32>, b: Option<i32>) -> i32
 {
     // and_then is like flat map
     a.and_then(|x| b.and_then(|y| Some(x*y))).unwrap_or(0)
+}
+
+fn value_in_cents(coin : Coin) -> u32
+{
+    match coin{
+        Coin::Penny => 1,
+        Coin::Nickel => 5,
+        Coin::Dime => 10,
+        Coin::Quarter => 25,
+        _ => {println!("Invalid Coin!");0}
+    }
+}
+
+fn times_two(x: Option<i32>) -> Option<i32>
+{
+    match x {
+        None => None,
+        Some(i) => Some(i*2)
+    }
+}
+
+fn times_five(x: Option<i32>) -> Result<i32, String>
+{
+    match x {
+        None => Err(String::from("Something wrong")),
+        Some(i) => Ok(i*5)
+    }
 }
