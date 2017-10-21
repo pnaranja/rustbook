@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 fn main() {
     /// VECTORS
     // Vectors are homogeneous
@@ -88,6 +90,58 @@ fn main() {
     // Use String splice to get the first character (first byte in this case)
     let sdf = &"sdf"[0..1];
     println!("First letter of sdf is {}", sdf); // First letter of sdf is s
+
+    /// HASHMAPS
+    /// Homogeneous values (keys must be same type, values must be same type)
+    /// Stored on the Heap
+    let mut scores = HashMap::new();
+    scores.insert(String::from("Blue"), 10);
+    scores.insert(String::from("Yellow"), 50);
+
+    // Also can be created by collecting a vector of tuples
+    let teams = vec![String::from("Blue"), String::from("Yellow")];
+    let initial_scores = vec![10, 50];
+    let scores2 : HashMap<&String, &i32> = teams.iter().zip(initial_scores.iter()).collect();
+
+    // Ownership
+    // Remember, String ownership is MOVED -> in this case, to the HashMap
+    let field_name = String::from("The field name");
+    let field_value = String::from("The field value");
+    let mut map = HashMap::new();
+    map.insert(field_name, field_value);
+
+    // Cannot use field_name anymore
+    //field_name.len();
+
+    // But if you pass in references, then you can use the field_name
+    let field_name2 = String::from("The field name");
+    let field_value2 = String::from("The field value");
+    let mut map2 = HashMap::new();
+    map2.insert(&field_name2, &field_value2);
+    field_name2.len();
+    // but the field_name2 and field_value2 must be valid for as long as the hash map is valid -> Lifetimes
+
+    // Access Hash Map values using get
+    // Notice get returns an Option
+    let the_field_value : Option<&String> = map.get(&String::from("The field name"));
+
+    // Iterate a HashMap
+    // Notice the differences of the format of the output
+    println!("\nScores: ");
+    scores.iter().for_each(|x| println!("{:?} ", x));
+
+    for (k,v) in &scores{
+        println!("{}, {}", k,v);
+    }
+    println!("{:?}", scores);
+
+    // Only insert if key has no value
+    scores.entry(String::from("Blue")).or_insert(100);
+    scores.entry(String::from("Green")).or_insert(500);
+    println!("\nNew Scores: {:?}", scores); // {"Green": 500, "Blue": 10, "Yellow": 50}
+
+    // Update value based on old value
+
 
 }
 
