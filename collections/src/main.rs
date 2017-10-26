@@ -135,12 +135,47 @@ fn main() {
     }
     println!("{:?}", scores);
 
+
     // Only insert if key has no value
     scores.entry(String::from("Blue")).or_insert(100);
     scores.entry(String::from("Green")).or_insert(500);
     println!("\nNew Scores: {:?}", scores); // {"Green": 500, "Blue": 10, "Yellow": 50}
 
+
     // Update value based on old value
+    println!("\nUpdate values based on new values");
+    let text = "hello world wonderful world oh so wonderful";
+    let mut map_text = HashMap::new();
+
+    // The count receives a mutable reference to the value of the key (which is an i32 in this case)
+    // Increase value of count dereference (whatever count is referring to)
+    for word in text.split_whitespace(){
+       let count : &mut i32 = map_text.entry(word).or_insert(0);
+        *count += 1;
+    }
+    println!("{:?}", map_text);
+
+    let mut map_text2 :HashMap<&str,i32> = HashMap::new();
+    text.split_whitespace().for_each(|x|{
+        let count : &mut i32 = map_text2.entry(x).or_insert(0);
+        *count += 1;
+    });
+    println!("{:?}", map_text2);
+
+    // Summary Problems
+    // Get Mean, Median and Mode of a list of integers
+    fn Mean(v : Vec<i32>) -> i32{
+        v.iter().fold(0, |acc, &x| acc+x) / v.len() as i32
+    }
+    println!("Mean of [1,2,3,4,5] is {}", Mean(vec![1,2,3,4,5]));
+
+//    fn Mode(v: Vec<i32>) -> i32{
+//        let v_middle = v.len() / 2;
+//        let mut vv = &v;
+//        vv.sort_by(|a,b|a.cmp(b));
+//        vv.get(v_middle).unwrap_or(&0)
+//    }
+
 
 
 }
