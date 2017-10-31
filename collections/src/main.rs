@@ -164,17 +164,20 @@ fn main() {
 
     // Summary Problems
     // Get Mean, Median and Mode of a list of integers
-    fn Mean(v : Vec<i32>) -> i32{
+    fn mean(v : Vec<i32>) -> i32{
         v.iter().fold(0, |acc, &x| acc+x) / v.len() as i32
     }
-    println!("Mean of [1,2,3,4,5] is {}", Mean(vec![1,2,3,4,5]));
+    println!("Mean of [1,2,3,4,5] is {}", mean(vec![1, 2, 3, 4, 5]));
 
-//    fn Mode(v: Vec<i32>) -> i32{
-//        let v_middle = v.len() / 2;
-//        let mut vv = &v;
-//        vv.sort_by(|a,b|a.cmp(b));
-//        vv.get(v_middle).unwrap_or(&0)
-//    }
+    fn median(v: &mut Vec<i32>) -> i32{
+        let v_middle = v.len() / 2;
+        v.sort_by(|a,b|a.cmp(b));
+        let v2 = v.get(v_middle).unwrap_or(&0);
+        return *v2; //dereference to get the value
+    }
+    let vec2 = &mut vec![5,2,1,4,3];
+    println!("Median of vec2 [5,2,1,4,3] is {}", median(vec2));
+    println!("vec2 is now {:?}", vec2);
 
 
 
