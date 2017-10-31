@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use std::collections::hash_map::Entry;
 
 fn main() {
     /// VECTORS
@@ -157,8 +158,8 @@ fn main() {
 
     let mut map_text2 :HashMap<&str,i32> = HashMap::new();
     text.split_whitespace().for_each(|x|{
-        let count : &mut i32 = map_text2.entry(x).or_insert(0);
-        *count += 1;
+        let count : &mut i32 = map_text2.entry(x).or_insert(0); // Get the ref to the count, or insert 0
+        *count += 1; // since count is a reference, need to increment what the ref is pointing to
     });
     println!("{:?}", map_text2);
 
@@ -173,13 +174,31 @@ fn main() {
         let v_middle = v.len() / 2;
         let mut v_mut = v.to_vec(); // copy the vector to a mutable vector
         v_mut.sort_by(|a,b|a.cmp(b));
-        let v2 = v_mut.get(v_middle).unwrap_or(&0);
+        let v2 = v_mut.get(v_middle).unwrap_or(&0); //unwraps return a reference
         return *v2; //dereference to get the value
     }
-    let vec2 = &mut vec![5,2,1,4,3];
-    println!("Median of vec2 [5,2,1,4,3] is {}", median(vec2));
+    let vec2 = &mut vec![5,5,1,4,3];
+    println!("Median of vec2 [5,5,1,4,3] is {}", median(vec2));
     println!("vec2 has not changed! : {:?}", vec2);
 
+    fn num_hashmap_count(v: &Vec<i32>) -> HashMap<&i32,i32>
+    {
+        let mut h : HashMap<&i32,i32> = HashMap::new();
+        for num in v{
+            let count = h.entry(num).or_insert(0);
+            *count += 1;
+        }
+        return h;
+    }
+
+    fn mode(v: &Vec<i32>) -> i32{
+        let mut h = num_hashmap_count(&v).clone();
+        h.iter().for_each(|x| println!("{:?}",x));
+        let init_key = *h.keys().min().unwrap(); //unwrap returns a reference
+        let highest_key = h.keys().fold(init_key,|a,b| if h.get(a).unwrap() > h.get(b).unwrap(){return a}else{return b});
+        *highest_key //dereference to get the value
+    }
+    println!("Mode of vec2 [5,5,1,4,3] is {}", mode(vec2));
 
 
 }
