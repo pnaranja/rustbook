@@ -169,15 +169,16 @@ fn main() {
     }
     println!("Mean of [1,2,3,4,5] is {}", mean(vec![1, 2, 3, 4, 5]));
 
-    fn median(v: &mut Vec<i32>) -> i32{
+    fn median(v: &Vec<i32>) -> i32{
         let v_middle = v.len() / 2;
-        v.sort_by(|a,b|a.cmp(b));
-        let v2 = v.get(v_middle).unwrap_or(&0);
+        let mut v_mut = v.to_vec(); // copy the vector to a mutable vector
+        v_mut.sort_by(|a,b|a.cmp(b));
+        let v2 = v_mut.get(v_middle).unwrap_or(&0);
         return *v2; //dereference to get the value
     }
     let vec2 = &mut vec![5,2,1,4,3];
     println!("Median of vec2 [5,2,1,4,3] is {}", median(vec2));
-    println!("vec2 is now {:?}", vec2);
+    println!("vec2 has not changed! : {:?}", vec2);
 
 
 
