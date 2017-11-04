@@ -1,5 +1,7 @@
 use std::collections::HashMap;
 use std::collections::hash_map::Entry;
+use std::io;
+use std::process;
 
 fn main() {
     /// VECTORS
@@ -166,7 +168,7 @@ fn main() {
     // Summary Problems
     // Get Mean, Median and Mode of a list of integers
     fn mean(v : Vec<i32>) -> i32{
-        v.iter().fold(0, |acc, &x| acc+x) / v.len() as i32
+        v.iter().fold(0, |acc, x| acc+x) / v.len() as i32
     }
     println!("Mean of [1,2,3,4,5] is {}", mean(vec![1, 2, 3, 4, 5]));
 
@@ -181,6 +183,7 @@ fn main() {
     println!("Median of vec2 [5,5,1,4,3] is {}", median(vec2));
     println!("vec2 has not changed! : {:?}", vec2);
 
+    /// Provide a hashmap of {word : wordcount}
     fn num_hashmap_count(v: &Vec<i32>) -> HashMap<&i32,i32>
     {
         let mut h : HashMap<&i32,i32> = HashMap::new();
@@ -199,6 +202,70 @@ fn main() {
         *highest_key //dereference to get the value
     }
     println!("Mode of vec2 [5,5,1,4,3] is {}", mode(vec2));
+
+
+    /// Convert strings to Pig Latin
+    /// Examples: first -> irst-fay ; apple -> apple-hay
+    fn pig_latin_word(s: &str) -> String{
+        if s.starts_with("a") || s.starts_with("e") || s.starts_with("i") || s.starts_with("o") || s.starts_with("u")
+        {
+            s.to_string()+"-hay"
+        }
+        else{
+            let fst = s[1..s.len()].to_string();
+            let snd = s[0..1].to_string()+"ay";
+            format!("{}-{}",fst,snd)
+        }
+
+    }
+    println!("{}", pig_latin_word("abbot"));
+    println!("{}", pig_latin_word("empty"));
+    println!("{}", pig_latin_word("ice"));
+    println!("{}", pig_latin_word("order"));
+    println!("{}", pig_latin_word("unless"));
+    println!("{}", pig_latin_word("paul"));
+    println!("{}", pig_latin_word("mae"));
+
+    /// Split string by whitespace and apply pig latin.  Add a space after each word
+    fn pig_latin_string(s:&str)->String{
+        s.to_string().split_whitespace().map(|x| pig_latin_word(&x)+" ").collect()
+    }
+    let str="Hello Paul how are you";
+    println!("String \"{}\" converted to pig latin: {}",str,pig_latin_string(str));
+
+
+    let clear_screen = ||std::process::Command::new("clear").status().unwrap();
+
+    fn name_to_dept()
+    {
+        let mut mem : HashMap<String,String> = HashMap::new();
+        let mut name = String::new();
+        let mut choice = String::new();
+
+
+        let print_menu = ||
+            {   println!("MENU:\n");
+                println!("1. Enter Name and Department)");
+                println!("2. Show list of people of a department)");
+                println!("3. Show list of all people in the company by department (sorted alphabetically)");
+                eprint!("Enter number choice: ");
+            };
+
+        println!("\n\nName-Department program\n");
+
+        loop {
+            println!("Press 'Ctl-C' to quit");
+            print_menu();
+            io::stdin().read_line(&mut choice).expect("Failed to read line");
+
+        }
+
+    }
+    println!("Press any key to start Name-Department program");
+    let mut x = String::new();
+    io::stdin().read_line(&mut x).expect("Failed to read line");
+    clear_screen();
+    name_to_dept();
 
 
 }
