@@ -1,7 +1,9 @@
 fn main() {
-    println!("Fib number 3: {}", fib(3));
-    println!("Fib number 10: {}", fib(10));
-    println!("Fib number 20: {}", fib(20));
+    //println!("Fib number 3: {}", fib(3));
+    //println!("Fib number 10: {}", fib(10));
+    //println!("Fib number 20: {}", fib(20));
+    //println!("Fib number 30: {}", fib(30));
+    println!("Fib number 46: {}", fib(46));
 
     // Panic when run in debug mode.  Able to finish in release mode
 //    println!("Fib number 50: {}", fib(50));
