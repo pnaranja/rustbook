@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 use std::io;
 use std::process;
+use std::i32;
 
 fn main() {
     // VECTORS
@@ -239,7 +240,6 @@ fn main() {
     {
         let mut _mem : HashMap<String,String> = HashMap::new();
         let mut _name = String::new();
-        let mut choice = String::new();
 
 
         let print_menu = ||
@@ -247,15 +247,25 @@ fn main() {
                 println!("1. Enter Name and Department)");
                 println!("2. Show list of people of a department)");
                 println!("3. Show list of all people in the company by department (sorted alphabetically)");
+                println!("4. Quit program");
                 eprint!("Enter number choice: ");
             };
 
         println!("\n\nName-Department program\n");
 
         loop {
-            println!("Press 'Ctl-C' to quit");
+            let mut choice = String::new();
             print_menu();
             io::stdin().read_line(&mut choice).expect("Failed to read line");
+            let ichoice = choice.chars().find(|a| a.is_digit(10)).and_then(|a| a.to_digit(10)).unwrap_or(0);
+            println!("You chose: {}", ichoice);
+            match ichoice{
+                1 => println!(""),
+                2 => println!(""),
+                3 => println!(""),
+                4 => break,
+                _ => println!("Invalid choice.  Try again\n"),
+            }
 
         }
 
