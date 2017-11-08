@@ -1,12 +1,11 @@
 use std::collections::HashMap;
-use std::collections::hash_map::Entry;
 use std::io;
 use std::process;
 
 fn main() {
-    /// VECTORS
+    // VECTORS
     // Vectors are homogeneous
-    let v : Vec<i32> = Vec::new();
+    let _v : Vec<i32> = Vec::new();
 
     // Use vec! macro to create vector with initial values
     let v2 = vec![1,2,3];
@@ -18,7 +17,7 @@ fn main() {
     v3.push(6);
 
     // Reading elems of a vector
-    let third_1: &i32 = &v2[2];
+    let _third_1: &i32 = &v2[2];
     let third_2: Option<&i32> = v2.get(2);
 
     let x = v2[2];
@@ -37,21 +36,21 @@ fn main() {
         Int(i32), Float(f64), Text(String)
     }
 
-    let row = vec![
+    let _row = vec![
         SpreadSheetCell::Int(3),
         SpreadSheetCell::Float(10.12),
         SpreadSheetCell::Text(String::from("blue"))
     ];
 
-    /// STRINGS
+    // STRINGS
     // Only 1 type of String in the Rust core - str (string slice)
     // Remember, str are a reference to some UTF-8 encoded string data stored elsewhere
 
     // String is in the Rust Std Library
     // It is a growable, mutable, owned UTF-8 string type
-    let mut s : String  = String::new();
-    let s : String = "A new String".to_string();
-    let s : String = String::from("Another String");
+    let mut _s : String  = String::new();
+    let _s : String = "A new String".to_string();
+    let _s : String = String::from("Another String");
 
     let mut s : String  = String::new();
     s.push_str("Try this");
@@ -94,9 +93,9 @@ fn main() {
     let sdf = &"sdf"[0..1];
     println!("First letter of sdf is {}", sdf); // First letter of sdf is s
 
-    /// HASHMAPS
-    /// Homogeneous values (keys must be same type, values must be same type)
-    /// Stored on the Heap
+    // HASHMAPS
+    // Homogeneous values (keys must be same type, values must be same type)
+    // Stored on the Heap
     let mut scores = HashMap::new();
     scores.insert(String::from("Blue"), 10);
     scores.insert(String::from("Yellow"), 50);
@@ -104,7 +103,7 @@ fn main() {
     // Also can be created by collecting a vector of tuples
     let teams = vec![String::from("Blue"), String::from("Yellow")];
     let initial_scores = vec![10, 50];
-    let scores2 : HashMap<&String, &i32> = teams.iter().zip(initial_scores.iter()).collect();
+    let _scores2 : HashMap<&String, &i32> = teams.iter().zip(initial_scores.iter()).collect();
 
     // Ownership
     // Remember, String ownership is MOVED -> in this case, to the HashMap
@@ -126,7 +125,7 @@ fn main() {
 
     // Access Hash Map values using get
     // Notice get returns an Option
-    let the_field_value : Option<&String> = map.get(&String::from("The field name"));
+    let _the_field_value : Option<&String> = map.get(&String::from("The field name"));
 
     // Iterate a HashMap
     // Notice the differences of the format of the output
@@ -195,7 +194,7 @@ fn main() {
     }
 
     fn mode(v: &Vec<i32>) -> i32{
-        let mut h = num_hashmap_count(&v).clone();
+        let h = num_hashmap_count(&v).clone();
         h.iter().for_each(|x| println!("{:?}",x));
         let init_key = *h.keys().min().unwrap(); //unwrap returns a reference
         let highest_key = h.keys().fold(init_key,|a,b| if h.get(a).unwrap() > h.get(b).unwrap(){return a}else{return b});
@@ -234,12 +233,12 @@ fn main() {
     println!("String \"{}\" converted to pig latin: {}",str,pig_latin_string(str));
 
 
-    let clear_screen = ||std::process::Command::new("clear").status().unwrap();
+    let clear_screen = ||process::Command::new("clear").status().unwrap();
 
     fn name_to_dept()
     {
-        let mut mem : HashMap<String,String> = HashMap::new();
-        let mut name = String::new();
+        let mut _mem : HashMap<String,String> = HashMap::new();
+        let mut _name = String::new();
         let mut choice = String::new();
 
 
@@ -262,8 +261,7 @@ fn main() {
 
     }
     println!("Press any key to start Name-Department program");
-    let mut x = String::new();
-    io::stdin().read_line(&mut x).expect("Failed to read line");
+    io::stdin().read_line(&mut String::new()).expect("Failed to read line");
     clear_screen();
     name_to_dept();
 
