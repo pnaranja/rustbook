@@ -234,47 +234,82 @@ fn main() {
     println!("String \"{}\" converted to pig latin: {}",str,pig_latin_string(str));
 
 
-    let clear_screen = ||process::Command::new("clear").status().unwrap();
 
+    println!("Press any key to start Name-Department program");
+    io::stdin().read_line(&mut String::new()).expect("Failed to read line");
+    name_to_dept();
+    
+
+    /// Program for adding/showing employee names and departments
     fn name_to_dept()
     {
-        let mut _mem : HashMap<String,String> = HashMap::new();
-        let mut _name = String::new();
+        let mut name_dept : HashMap<String,String> = HashMap::new();
 
-
+        let clear_screen = || process::Command::new("clear").status().unwrap();
+        
         let print_menu = ||
-            {   println!("MENU:\n");
-                println!("1. Enter Name and Department)");
-                println!("2. Show list of people of a department)");
+            {   
+                clear_screen();
+                println!("Main Menu:\n");
+                println!("1. Enter Name and Department");
+                println!("2. Show list of people of a department");
                 println!("3. Show list of all people in the company by department (sorted alphabetically)");
                 println!("4. Quit program");
                 eprint!("Enter number choice: ");
             };
 
-        println!("\n\nName-Department program\n");
-
-        loop {
-            let mut choice = String::new();
-            print_menu();
-            io::stdin().read_line(&mut choice).expect("Failed to read line");
-            let ichoice = choice.chars().find(|a| a.is_digit(10)).and_then(|a| a.to_digit(10)).unwrap_or(0);
-            println!("You chose: {}", ichoice);
-            match ichoice{
-                1 => println!(""),
-                2 => println!(""),
-                3 => println!(""),
-                4 => break,
-                _ => println!("Invalid choice.  Try again\n"),
-            }
-
+        /// Reads a line as a String and returns the value
+        fn readline() -> String{
+            let mut ret = String::new();
+            io::stdin().read_line(&mut ret).expect("Failed to read line");
+            ret
         }
 
+        /// User Prompt to go back to Main Menu
+        fn back_to_main_menu(){
+            println!("Press any key to go back to the Main Menu");
+            io::stdin().read_line(&mut String::new()).expect("Failed to read line");
+        }
+
+        /// Add name and department to HashMap
+        fn add_name_dept(name_dept : &mut HashMap<String,String>){
+            eprint! ("Enter Name: ");
+            let name = readline();
+            eprint! ("Enter Department: ");
+            let dept = readline();
+            name_dept.insert(name,dept);
+            back_to_main_menu();
+        }
+
+        /// Show all people in a particular department
+        fn show_people_in_dept(name_dept : &HashMap<String,String>){
+            eprint! ("Enter Department you want to see: ");
+            let dept = readline();
+
+            let new_hash : HashMap<&String,&String> 
+                = name_dept.iter().filter(|&(_a,b)| dept.eq(b)).collect();
+
+            new_hash.keys().for_each(|x| eprint!("{}",x));
+            back_to_main_menu();
+        }
+
+
+
+
+        // Main Loop
+        loop {
+            print_menu();
+            let choice = readline().chars().find(|a| a.is_digit(10)).and_then(|a| a.to_digit(10)).unwrap_or(0);
+            println!("You chose: {}", choice);
+
+            match choice{
+                1 => add_name_dept(&mut name_dept),
+                2 => show_people_in_dept(&name_dept),
+                3 => println!(""),
+                4 => break,
+                _ => println! ("Unknown menu choice")
+            };
+        }
     }
-    println!("Press any key to start Name-Department program");
-    io::stdin().read_line(&mut String::new()).expect("Failed to read line");
-    clear_screen();
-    name_to_dept();
-
-
 }
 
