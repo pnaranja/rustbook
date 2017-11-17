@@ -289,7 +289,15 @@ fn main() {
             let new_hash : HashMap<&String,&String> 
                 = name_dept.iter().filter(|&(_a,b)| dept.eq(b)).collect();
 
-            new_hash.keys().for_each(|x| eprint!("{}",x));
+            if new_hash.is_empty()
+            {
+                println!("Did not find any names in department {}", dept);
+            }
+            else
+            {
+                new_hash.keys().for_each(|x| eprint!("{}",x));
+            }
+
             back_to_main_menu();
         }
 
