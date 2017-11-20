@@ -267,7 +267,7 @@ fn main() {
 
         /// User Prompt to go back to Main Menu
         fn back_to_main_menu(){
-            println!("Press any key to go back to the Main Menu");
+            println!("\nPress any key to go back to the Main Menu");
             io::stdin().read_line(&mut String::new()).expect("Failed to read line");
         }
 
@@ -281,26 +281,55 @@ fn main() {
             back_to_main_menu();
         }
 
+        /// Return all people in a particular department
+        fn get_people_in_dept(dept :&String, name_dept : &HashMap<String,String>) -> Vec<String>{
+            let new_hash : HashMap<String,String>
+                = name_dept.iter()
+                    .filter(|&(_a,b)| dept.clone().eq(b))
+                    .map(|(a,b)|(a.clone(),b.clone()))
+                    .collect();
+
+            new_hash.keys().map(|v|v.clone()).collect::<Vec<String>>()
+        }
+
+
         /// Show all people in a particular department
         fn show_people_in_dept(name_dept : &HashMap<String,String>){
             eprint! ("Enter Department you want to see: ");
             let dept = readline();
 
-            let new_hash : HashMap<&String,&String> 
-                = name_dept.iter().filter(|&(_a,b)| dept.eq(b)).collect();
+            let names = get_people_in_dept(&dept, name_dept);
 
-            if new_hash.is_empty()
+            if names.is_empty()
             {
                 println!("Did not find any names in department {}", dept);
             }
             else
             {
-                new_hash.keys().for_each(|x| eprint!("{}",x));
+                names.iter().for_each(|x| eprint!("{}",x));
             }
 
             back_to_main_menu();
         }
 
+        /// Show all people by dept (in alphabetical order)
+        fn show_all_people_by_dept(name_dept : &HashMap<String,String>)
+        {
+            println!("Showing list of all people in the company by department");
+
+            let mut departments = name_dept.values().collect::<Vec<&String>>();
+            departments.sort(); departments.dedup();
+
+            departments.iter().for_each(|dept|
+            {
+                println!("Department: {}", dept);
+                let mut people = get_people_in_dept(dept, name_dept);
+                people.sort();
+                people.iter().for_each(|person| println!("Name: {}",person))
+            });
+
+            back_to_main_menu();
+        }
 
 
 
@@ -308,12 +337,12 @@ fn main() {
         loop {
             print_menu();
             let choice = readline().chars().find(|a| a.is_digit(10)).and_then(|a| a.to_digit(10)).unwrap_or(0);
-            println!("You chose: {}", choice);
+            println!("You chose: {}\n", choice);
 
             match choice{
                 1 => add_name_dept(&mut name_dept),
                 2 => show_people_in_dept(&name_dept),
-                3 => println!(""),
+                3 => show_all_people_by_dept(&name_dept),
                 4 => break,
                 _ => println! ("Unknown menu choice")
             };
