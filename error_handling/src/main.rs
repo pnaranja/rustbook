@@ -11,6 +11,9 @@ fn main() {
     let mut f = ret_result().unwrap_or_else(|_| panic!("There was a problem with ret_result"));
 
     f.write("Hello everyone!".as_bytes()).unwrap();
+
+    f = ret_result2().unwrap_or_else(|_| panic!("There was a problem with ret_result2"));
+    f.write("Hello everyone2!".as_bytes()).unwrap();
 }
 
 fn open_or_create_file ()
@@ -37,10 +40,15 @@ fn open_or_create_file2 ()
 
 fn ret_result() -> Result<File,io::Error>
 {
-    let mut f = File::create("test2/hello.txt");
+    let mut f = File::create("test/hello.txt");
     match f{
         Ok(f) => Ok(f),
         Err(e) => Err(e)
     }
+}
+
+fn ret_result2() -> Result<File,io::Error>
+{
+    Ok(File::create("test2/hello.txt")?)
 }
 
