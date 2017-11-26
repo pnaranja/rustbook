@@ -22,8 +22,24 @@ fn largest<T : Clone + Ord >(list : &[T]) -> T
     lst.last().unwrap().clone()
 }
 
+struct Point<T,U>{
+    x : T,
+    y: U,
+}
 
+impl<T,U> Point<T,U>{
+    fn x (&self) -> &T{
+        &self.x
+    }
 
+    fn y (&self) -> &U{
+        &self.y
+    }
+
+    fn mixup<V,W>(self, other_point: Point<V,W>) -> Point<T,W>{
+        Point{x : self.x, y: other_point.y}
+    }
+}
 
 fn main() {
     let num_list = vec![1,4,5,3,9,3,4,6,8];
@@ -34,6 +50,17 @@ fn main() {
 
     println!("Using Generic: Largest number is {}", largest(&num_list));
     println!("Using Generic: Largest char is {}\n\n", largest(&char_list));
+
+    let int_and_float = Point {x : 5, y : 1.0};
+    println!("Point x is {}", int_and_float.x ());
+    println!("Point y is {}", int_and_float.y ());
+
+    let char_and_string = Point {x: 'w', y: "Hello"};
+    let mixup = int_and_float.mixup(char_and_string);
+
+    println!("Mixup! x: {}, y: {}\n\n", mixup.x(), mixup.y());
+
+
 
     let tweet1 = Tweet{
         username: String::from("horse_ebooks"),
