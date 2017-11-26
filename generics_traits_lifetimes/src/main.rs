@@ -1,4 +1,8 @@
+extern crate generics_traits_lifetimes;
+
 use std::cmp::Ord;
+use generics_traits_lifetimes::Tweet;
+use generics_traits_lifetimes::Summarizable;
 
 
 fn largest_i32(list : &[i32]) -> i32
@@ -18,6 +22,9 @@ fn largest<T : Clone + Ord >(list : &[T]) -> T
     lst.last().unwrap().clone()
 }
 
+
+
+
 fn main() {
     let num_list = vec![1,4,5,3,9,3,4,6,8];
     let char_list = vec!['a','b','z','d','y','p'];
@@ -26,7 +33,14 @@ fn main() {
     println!("Largest char is {}", largest_char(&char_list));
 
     println!("Using Generic: Largest number is {}", largest(&num_list));
-    println!("Using Generic: Largest char is {}", largest(&char_list));
+    println!("Using Generic: Largest char is {}\n\n", largest(&char_list));
 
+    let tweet1 = Tweet{
+        username: String::from("horse_ebooks"),
+        content: String::from("of course, as you probably know, people"),
+        reply: false,
+        retweet: false,
+    };
 
+    println!("New tweet: {}", tweet1.summary());
 }
