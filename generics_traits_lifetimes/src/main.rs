@@ -70,4 +70,6 @@ fn main() {
     };
 
     println!("New tweet: {}", tweet1.summary());
+    println!("Vector summary of num_list: {}", num_list.summary());
+    println!("Tweet format using Display trait: {}", tweet1);
 }
