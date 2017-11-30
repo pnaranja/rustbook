@@ -2,7 +2,9 @@ extern crate generics_traits_lifetimes;
 
 use std::cmp::Ord;
 use generics_traits_lifetimes::Tweet;
+use generics_traits_lifetimes::NewsArticle2;
 use generics_traits_lifetimes::Summarizable;
+use generics_traits_lifetimes::Summarizable2;
 
 
 fn largest_i32(list : &[i32]) -> i32
@@ -72,4 +74,15 @@ fn main() {
     println!("New tweet: {}", tweet1.summary());
     println!("Vector summary of num_list: {}", num_list.summary());
     println!("Tweet format using Display trait: {}", tweet1);
+
+
+
+    let newsarticle2 = NewsArticle2{
+        headline : String::from("headline"),
+        location : String::from("location"),
+        author : String::from("author"),
+        content : String::from("content"),
+
+    };
+    println!("NewsArticle2 using default impl of Summarizable2: {}", newsarticle2.summary());
 }
