@@ -24,6 +24,23 @@ fn largest<T : Clone + Ord >(list : &[T]) -> T
     lst.last().unwrap().clone()
 }
 
+// More memory efficient
+// Return a reference instead of a copy
+fn largest2<T : PartialOrd>(list : &[T]) -> &T
+{
+    let mut largest = &list[0];
+    let mut largest_index = 0;
+
+    for (i, item) in list.iter().enumerate(){
+        if item>largest{
+            largest = item;
+            largest_index = i;
+        }
+    }
+
+    list.get(largest_index).unwrap()
+}
+
 struct Point<T,U>{
     x : T,
     y: U,
@@ -51,7 +68,8 @@ fn main() {
     println!("Largest char is {}", largest_char(&char_list));
 
     println!("Using Generic: Largest number is {}", largest(&num_list));
-    println!("Using Generic: Largest char is {}\n\n", largest(&char_list));
+    println!("Using Generic: Largest char is {}", largest(&char_list));
+    println!("Using Generic - largest2: Largest char is {}\n\n", largest2(&char_list));
 
     let int_and_float = Point {x : 5, y : 1.0};
     println!("Point x is {}", int_and_float.x ());
