@@ -8,6 +8,8 @@ use generics_traits_lifetimes::Summarizable;
 use generics_traits_lifetimes::Summarizable2;
 use generics_traits_lifetimes::Summarizable3;
 
+use generics_traits_lifetimes::longest;
+
 
 fn largest_i32(list : &[i32]) -> i32
 {
@@ -116,4 +118,12 @@ fn main() {
 
 
     println!("Using Generic trait of Summarizable3: {}", tweet2.summary_generic()) ;
+
+
+    // LIFETIMES
+    let string1 = String::from ("abcd");
+    let string2 = "zyx";
+    let longest_len = longest (string1.as_str(), string2);
+
+
 }

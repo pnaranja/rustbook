@@ -104,4 +104,13 @@ impl <T: Summarizable> Summarizable3 for T{
     fn summary_content_generic(&self) -> String{
         format!("generic stuff!!!!")
     }
+
+
+}
+
+//Lifetimes
+//Lifetime annotations help relate the lifetimes of multiple references to each other
+//Both x and y must both live as long as the generic lifetime
+pub fn longest<'a> (x: &'a str, y: &'a str ) -> &'a str{
+    if x.len () > y.len (){x} else {y}
 }
