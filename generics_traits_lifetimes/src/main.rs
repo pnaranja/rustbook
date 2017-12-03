@@ -2,9 +2,11 @@ extern crate generics_traits_lifetimes;
 
 use std::cmp::Ord;
 use generics_traits_lifetimes::Tweet;
+use generics_traits_lifetimes::Tweet2;
 use generics_traits_lifetimes::NewsArticle2;
 use generics_traits_lifetimes::Summarizable;
 use generics_traits_lifetimes::Summarizable2;
+use generics_traits_lifetimes::Summarizable3;
 
 
 fn largest_i32(list : &[i32]) -> i32
@@ -103,4 +105,15 @@ fn main() {
 
     };
     println!("NewsArticle2 using default impl of Summarizable2: {}", newsarticle2.summary());
+
+
+    let tweet2 = Tweet2{
+        username: String::from("cars"),
+        content: String::from("They're fast"),
+        reply: false,
+        retweet: false,
+    };
+
+
+    println!("Using Generic trait of Summarizable3: {}", tweet2.summary_generic()) ;
 }

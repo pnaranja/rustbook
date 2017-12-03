@@ -76,3 +76,32 @@ impl Summarizable2 for NewsArticle2{
 }
 
 
+// Trait Bounds
+pub trait Summarizable3{
+    fn summary_generic(&self) -> String{
+        format!("Read more... {}", self.summary_content_generic())
+    }
+
+    fn summary_content_generic(&self) -> String;
+}
+
+// Implement a trait for a generic bounded by a trait (aka "bounded implementations")
+pub struct Tweet2{
+    pub username : String,
+    pub content : String,
+    pub reply : bool,
+    pub retweet : bool,
+}
+
+impl Summarizable for Tweet2{
+    fn summary(&self) -> String{
+        format!("Tweet2: {}, by {}", self.content, self.username)
+    }
+
+}
+
+impl <T: Summarizable> Summarizable3 for T{
+    fn summary_content_generic(&self) -> String{
+        format!("generic stuff!!!!")
+    }
+}
