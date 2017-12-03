@@ -76,3 +76,41 @@ impl Summarizable2 for NewsArticle2{
 }
 
 
+// Trait Bounds
+pub trait Summarizable3{
+    fn summary_generic(&self) -> String{
+        format!("Read more... {}", self.summary_content_generic())
+    }
+
+    fn summary_content_generic(&self) -> String;
+}
+
+// Implement a trait for a generic bounded by a trait (aka "bounded implementations")
+pub struct Tweet2{
+    pub username : String,
+    pub content : String,
+    pub reply : bool,
+    pub retweet : bool,
+}
+
+impl Summarizable for Tweet2{
+    fn summary(&self) -> String{
+        format!("Tweet2: {}, by {}", self.content, self.username)
+    }
+
+}
+
+impl <T: Summarizable> Summarizable3 for T{
+    fn summary_content_generic(&self) -> String{
+        format!("generic stuff!!!!")
+    }
+
+
+}
+
+//Lifetimes
+//Lifetime annotations help relate the lifetimes of multiple references to each other
+//Both x and y must both live as long as the generic lifetime
+pub fn longest<'a> (x: &'a str, y: &'a str ) -> &'a str{
+    if x.len () > y.len (){x} else {y}
+}
