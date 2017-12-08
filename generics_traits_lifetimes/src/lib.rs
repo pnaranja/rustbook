@@ -108,9 +108,39 @@ impl <T: Summarizable> Summarizable3 for T{
 
 }
 
+
+
+
 //Lifetimes
 //Lifetime annotations help relate the lifetimes of multiple references to each other
-//Both x and y must both live as long as the generic lifetime
+
+//Both x and y must both live as long as the returned value's lifetime
+//The returned reference is guaranteed to be valid as long as the shorter of the lifetimes
+//of x and y
 pub fn longest<'a> (x: &'a str, y: &'a str ) -> &'a str{
     if x.len () > y.len (){x} else {y}
+}
+
+//Can't return a reference which was created locally in the function
+//Compiler complains that ret does not live long enough
+//pub fn bad_return<'a> (x: &'a str, y: &str ) -> &'a str{
+//    if x.len () > y.len (){x}
+//    else {
+//        let ret = String::from("The y value");
+//        &ret
+//    }
+//}
+
+//Struct which holds a ref
+//Need to declare lifetime in the beginning, like for a function
+pub struct HoldRef<'a>{
+    pub myref : &'a str,
+}
+
+//No need to explicitly declare lifetimes because of 3rd lifetime elision rule
+impl<'a> HoldRef<'a>{
+    pub fn announce_and_ret(&self, announcement: &str) -> &str{
+        println!("Attention! {}", announcement);
+        self.myref
+    }
 }

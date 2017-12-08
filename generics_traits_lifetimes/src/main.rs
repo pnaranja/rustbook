@@ -7,6 +7,7 @@ use generics_traits_lifetimes::NewsArticle2;
 use generics_traits_lifetimes::Summarizable;
 use generics_traits_lifetimes::Summarizable2;
 use generics_traits_lifetimes::Summarizable3;
+use generics_traits_lifetimes::HoldRef;
 
 use generics_traits_lifetimes::longest;
 
@@ -123,7 +124,26 @@ fn main() {
     // LIFETIMES
     let string1 = String::from ("abcd");
     let string2 = "zyx";
-    let longest_len = longest (string1.as_str(), string2);
+    println!("Longest length between string1 and string2 - {}",longest(&string1, string2));
 
+
+    //This will not compile because string3 needs to live as long as result
+//    let result: String;
+//    {
+//        let string3 = String::from("efghij");
+//        let result = longest(&string1, &string3);
+//    }
+//    println!("The longest string is {}", result);
+
+    let struct_ref = HoldRef{myref: &"Hello!"};
+    println!("Structure holding reference - {}", struct_ref.myref);
+
+    // Lifetimes can be inferred - lifetime elision rules
+    // 1. Each parameter in the function/method gets it's own lifetime parameter
+    // 2. If only 1 parameter, output lifetime is the same as input lifetime
+    // 3. If a method (with parameter &self or mut &self), lifetime of self is the output lifetime
+
+    struct_ref.announce_and_ret("HELLO!!!");
 
 }
+
