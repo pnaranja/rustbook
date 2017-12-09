@@ -10,6 +10,7 @@ use generics_traits_lifetimes::Summarizable3;
 use generics_traits_lifetimes::HoldRef;
 
 use generics_traits_lifetimes::longest;
+use generics_traits_lifetimes::longest_with_announcement;
 
 
 fn largest_i32(list : &[i32]) -> i32
@@ -124,7 +125,7 @@ fn main() {
     // LIFETIMES
     let string1 = String::from ("abcd");
     let string2 = "zyx";
-    println!("Longest length between string1 and string2 - {}",longest(&string1, string2));
+    println!("Longest length between string1 and string2 - {}\n",longest(&string1, string2));
 
 
     //This will not compile because string3 needs to live as long as result
@@ -136,14 +137,23 @@ fn main() {
 //    println!("The longest string is {}", result);
 
     let struct_ref = HoldRef{myref: &"Hello!"};
-    println!("Structure holding reference - {}", struct_ref.myref);
+    println!("Structure holding reference - {}\n", struct_ref.myref);
 
     // Lifetimes can be inferred - lifetime elision rules
     // 1. Each parameter in the function/method gets it's own lifetime parameter
     // 2. If only 1 parameter, output lifetime is the same as input lifetime
     // 3. If a method (with parameter &self or mut &self), lifetime of self is the output lifetime
 
-    struct_ref.announce_and_ret("HELLO!!!");
+    struct_ref.announce_and_ret("HELLO!!!\n");
+
+    // Static lifetimes
+    // Lifetime that is the entire duration of the program
+    let static_string : &'static str = "I have a static lifetime";
+    println!("Using static lifetime: {}\n", static_string);
+
+
+    println!("Longest length between string1 and string2 with announcement - {}"
+             ,longest_with_announcement(&string1, string2, "HELLO!"));
 
 }
 

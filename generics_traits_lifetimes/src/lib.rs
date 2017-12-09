@@ -143,4 +143,15 @@ impl<'a> HoldRef<'a>{
         println!("Attention! {}", announcement);
         self.myref
     }
+
+}
+
+// Add Generic type of announcement
+// Compiler errors led me to add T to implement trait -  std::fmt::Debug
+// and remove bound - ?Sized
+pub fn longest_with_announcement<'a,T> (x: &'a str, y: &'a str, announcement: &'a T) -> &'a str
+    where T:Display, T:std::fmt::Debug, T: ?Sized
+{
+    println!("Attention! {:?}", announcement);
+    if x.len () > y.len (){x} else {y}
 }
