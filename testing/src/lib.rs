@@ -1,5 +1,5 @@
 #[cfg(test)]
-mod tests {
+pub mod tests {
 
 
     // Set # of threads to use to run: cargo run -- --test-threads=1
@@ -32,18 +32,19 @@ mod tests {
     }
 
 
-    fn greeting(name: &str) -> String{
+    pub fn greeting(name: &str) -> String{
         format!("Hello {}!", name)
     }
 
     #[test]
     fn greeting_test(){
         println!("THE GREETING TEST!!!!");
-        assert_eq!(greeting("Paul"), "Hello Paul!")
+        assert_eq!(greeting("Paul"), "Hello Paul!");
     }
 
     // thread 'tests::greeting_test_error' panicked at 'Expected 'Hello Paul!' but received 'Hello Mike!''
     #[test]
+    #[ignore]
     fn greeting_test_error(){
         assert!(greeting("Mike").eq("Hello Paul!"), "Expected 'Hello Paul!' but received '{}'", greeting("Mike"))
     }
@@ -64,11 +65,13 @@ mod tests {
 
     #[test]
     #[should_panic]
+    #[ignore]
     fn less_than_100(){
         not_greater_than_100(99);
     }
 
     #[test]
+    #[ignore]
     #[should_panic(expected="Cannot be something")]
     fn wrong_panic_msg(){
         not_greater_than_100(102);
@@ -80,9 +83,6 @@ mod tests {
     fn ignore_this_test(){
         assert_eq!(1,1);
     }
-
-
-
 
 
 
@@ -103,7 +103,12 @@ mod tests {
         }
     }
 
-
 }
+
+pub fn greeting2(name: &str) -> String{
+    format!("Hello {}!", name)
+}
+
+
 
 
