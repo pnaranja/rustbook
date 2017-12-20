@@ -1,6 +1,12 @@
 #[cfg(test)]
 mod tests {
 
+
+    // Set # of threads to use to run: cargo run -- --test-threads=1
+    // Show debug output (like println statements): cargo run -- --nocapture
+    // Run ignored tests: cargo test -- --ignored
+    // Run a subset of tests: cargo test greeting
+
     #[test]
     fn exploration() {
         assert_eq!(2 + 2, 4);
@@ -32,6 +38,7 @@ mod tests {
 
     #[test]
     fn greeting_test(){
+        println!("THE GREETING TEST!!!!");
         assert_eq!(greeting("Paul"), "Hello Paul!")
     }
 
@@ -65,6 +72,13 @@ mod tests {
     #[should_panic(expected="Cannot be something")]
     fn wrong_panic_msg(){
         not_greater_than_100(102);
+    }
+
+    // Ignore this test
+    #[test]
+    #[ignore]
+    fn ignore_this_test(){
+        assert_eq!(1,1);
     }
 
 
