@@ -15,14 +15,14 @@ pub struct Config{
 }
 
 impl Config{
+
     /// Creates a Config struct of the parameters
     pub fn new(args: &[String]) -> Config {
         Config::parse_args(args).unwrap_or_else(exit_gracefully)
     }
 
     fn parse_args (args: &[String]) -> Result<Config, &'static str>{
-        if args.len() < 3 {return Err ("Not enough arguments");}
-        if args.len() > 3 {return Err ("Too many arguments");}
+        if args.len() != 3 {return Err("USAGE: minigrep <query> <filename>");}
         Ok (Config{query : args[1].clone() , filename : args[2].clone() })
     }
 }
