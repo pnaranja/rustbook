@@ -10,7 +10,7 @@ fn exit_gracefully<E: std::fmt::Debug, T: std::fmt::Debug>(msg: E) -> T{
 
 #[derive(Debug)]
 pub struct Config{
-    query: String,
+    pub query: String,
     filename : String
 }
 
@@ -28,21 +28,52 @@ impl Config{
 }
 
 /// Retrieve the contents of the file in the config
-pub fn get_contents(config: Config) -> String {
-    read_from_contents(config)
-        .unwrap_or_else(|err| {
-            println!("Application error: {}", err);
-            process::exit(1);
-        })
+pub fn get_contents(config: &Config) -> String {
+    read_from_contents(config).unwrap_or_else(exit_gracefully)
 }
 
-fn read_from_contents(config: Config) -> Result<String, Box<Error>> {
-    let mut f = open_file(config);
+fn read_from_contents(config: &Config) -> Result<String, Box<Error>> {
+    let mut f = open_file(&config);
     let mut contents = String::new();
     f.read_to_string(&mut contents)?;
     Ok(contents)
 }
 
-fn open_file (config: Config) -> File{
-    File::open(config.filename).unwrap_or_else(exit_gracefully)
+fn open_file (config: &Config) -> File{
+    File::open(&config.filename).unwrap_or_else(exit_gracefully)
+}
+
+
+/// Search for the query in the contents
+/// Lifetimes: Search results should live as long as the contents to search
+pub fn search<'a>(query: &str, contents: &'a str) -> Vec<&'a str>{
+    contents.lines().filter(|x| x.contains(query)).map(|x| x.trim()).collect()
+}
+
+
+#[cfg(test)]
+mod test{
+    use super::*;
+
+    #[test]
+    fn one_result(){
+        let query = "duct";
+        let contents =
+            "Rust:
+            safe, fast, productive.
+            Pick three.";
+
+        assert_eq!(vec!["safe, fast, productive."], search(query, contents));
+    }
+
+    #[test]
+    fn two_results(){
+        let query = "lo";
+        let contents =
+            "Hello,
+            How are you?
+            How low can you go?";
+
+        assert_eq!(vec!["Hello,","How low can you go?"], search(query, contents));
+    }
 }
