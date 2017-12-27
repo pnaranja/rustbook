@@ -5,7 +5,7 @@ use std::error::Error;
 use std::env;
 
 fn exit_gracefully<E: std::fmt::Debug, T: std::fmt::Debug>(msg: E) -> T{
-    println!("Problem parsing arguments: {:?}", msg);
+    eprintln!("Problem running minigrep: {:?}", msg);
     process::exit(1);
 }
 
