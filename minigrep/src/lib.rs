@@ -2,6 +2,7 @@ use std::fs::File;
 use std::io::Read;
 use std::process;
 use std::error::Error;
+use std::env;
 
 fn exit_gracefully<E: std::fmt::Debug, T: std::fmt::Debug>(msg: E) -> T{
     println!("Problem parsing arguments: {:?}", msg);
@@ -11,7 +12,8 @@ fn exit_gracefully<E: std::fmt::Debug, T: std::fmt::Debug>(msg: E) -> T{
 #[derive(Debug)]
 pub struct Config{
     pub query: String,
-    filename : String
+    filename : String,
+    pub case_insensitive : String,
 }
 
 impl Config{
@@ -23,7 +25,8 @@ impl Config{
 
     fn parse_args (args: &[String]) -> Result<Config, &'static str>{
         if args.len() != 3 {return Err("USAGE: minigrep <query> <filename>");}
-        Ok (Config{query : args[1].clone() , filename : args[2].clone() })
+        Ok (Config{query : args[1].clone() , filename : args[2].clone(),
+            case_insensitive : env::var("CASE_INSENSITIVE").unwrap_or("false".to_string())})
     }
 }
 
@@ -48,6 +51,13 @@ fn open_file (config: &Config) -> File{
 /// Lifetimes: Search results should live as long as the contents to search
 pub fn search<'a>(query: &str, contents: &'a str) -> Vec<&'a str>{
     contents.lines().filter(|x| x.contains(query)).map(|x| x.trim()).collect()
+}
+
+/// Search for query (case insensitive)
+pub fn search_case_insensitive<'a>(query: &str, contents: &'a str) -> Vec<&'a str>{
+    // to_lowercase creates new String.  However contains function requires string reference
+    contents.lines().filter(|x| x.to_lowercase().contains(&query.to_lowercase()))
+        .map(|x| x.trim()).collect()
 }
 
 
@@ -75,5 +85,17 @@ mod test{
             How low can you go?";
 
         assert_eq!(vec!["Hello,","How low can you go?"], search(query, contents));
+    }
+
+    #[test]
+    fn case_insensitive(){
+        let query = "rUst";
+        let contents =
+            "Rust is great
+            But is rust better than go?
+            I don't know!";
+
+        assert_eq!(vec!["Rust is great","But is rust better than go?"],
+                   search_case_insensitive(query, contents));
     }
 }
