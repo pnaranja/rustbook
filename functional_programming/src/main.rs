@@ -56,5 +56,5 @@ fn generate_workout<T:Fn(i32) -> i32>(calculation: T, intensity: i32){
 
 fn main(){
     generate_workout(simulated_expensive_calculation, 23);
-
 }
+
