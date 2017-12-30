@@ -3,6 +3,7 @@ use std::io::Read;
 use std::process;
 use std::error::Error;
 use std::env;
+use std::env::Args;
 
 fn exit_gracefully<E: std::fmt::Debug, T: std::fmt::Debug>(msg: E) -> T{
     eprintln!("Problem running minigrep: {:?}", msg);
@@ -19,14 +20,17 @@ pub struct Config{
 impl Config{
 
     /// Creates a Config struct of the parameters
-    pub fn new(args: &[String]) -> Config {
+    pub fn new(args: Args) -> Config {
         Config::parse_args(args).unwrap_or_else(exit_gracefully)
     }
 
-    fn parse_args (args: &[String]) -> Result<Config, &'static str>{
+    fn parse_args (mut args: Args) -> Result<Config, &'static str>{
         if args.len() != 3 {return Err("USAGE: minigrep <query> <filename>");}
-        Ok (Config{query : args[1].clone() , filename : args[2].clone(),
-            case_insensitive : env::var("CASE_INSENSITIVE").unwrap_or("false".to_string())})
+        args.next(); // first argument is program name
+
+        Ok (Config{query : args.next().expect("Could not get query string")
+            , filename : args.next().expect("Could not get file name")
+            , case_insensitive : env::var("CASE_INSENSITIVE").unwrap_or("false".to_string())})
     }
 }
 
