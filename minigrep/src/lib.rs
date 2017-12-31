@@ -5,6 +5,14 @@ use std::error::Error;
 use std::env;
 use std::env::Args;
 
+/// A general function that will print a general message to std err and exit the program
+/// Intended to be used using unwrap_or_else
+///
+/// ## Example
+/// ```
+/// Config::parse_args(args).unwrap_or_else(exit_gracefully)
+/// ```
+///
 fn exit_gracefully<E: std::fmt::Debug, T: std::fmt::Debug>(msg: E) -> T{
     eprintln!("Problem running minigrep: {:?}", msg);
     process::exit(1);
@@ -24,6 +32,8 @@ impl Config{
         Config::parse_args(args).unwrap_or_else(exit_gracefully)
     }
 
+    /// Parses the arguments to the program<br>
+    /// Parameter is the arguments iterator
     fn parse_args (mut args: Args) -> Result<Config, &'static str>{
         if args.len() != 3 {return Err("USAGE: minigrep <query> <filename>");}
         args.next(); // first argument is program name
@@ -34,11 +44,13 @@ impl Config{
     }
 }
 
-/// Retrieve the contents of the file in the config
+/// Retrieve the contents of the file in the config<br>
+/// Exits the program if the file could not be read
 pub fn get_contents(config: &Config) -> String {
     read_from_contents(config).unwrap_or_else(exit_gracefully)
 }
 
+/// Private function that actually attempts to read the file
 fn read_from_contents(config: &Config) -> Result<String, Box<Error>> {
     let mut f = open_file(&config);
     let mut contents = String::new();
@@ -46,12 +58,14 @@ fn read_from_contents(config: &Config) -> Result<String, Box<Error>> {
     Ok(contents)
 }
 
+/// Private function that attempts to create a file handle<br>
+/// Exits the program if the file could not be read
 fn open_file (config: &Config) -> File{
     File::open(&config.filename).unwrap_or_else(exit_gracefully)
 }
 
 
-/// Search for the query in the contents
+/// Search for the query in the contents<br>
 /// Lifetimes: Search results should live as long as the contents to search
 pub fn search<'a>(query: &str, contents: &'a str) -> Vec<&'a str>{
     contents.lines().filter(|x| x.contains(query)).map(|x| x.trim()).collect()

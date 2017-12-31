@@ -1,14 +1,13 @@
-extern crate minigrep;
+extern crate minigrep_lib;
 
-use minigrep::Config;
-use minigrep::get_contents;
-use minigrep::search;
-use minigrep::search_case_insensitive;
+use minigrep_lib::Config;
+use minigrep_lib::get_contents;
+use minigrep_lib::search;
+use minigrep_lib::search_case_insensitive;
 use std::env;
 use std::env::Args;
 
 fn main() {
-//    let args: Vec<String> = env::args().collect();
     let args : Args = env::args();
 
     let config = Config::new(args);
