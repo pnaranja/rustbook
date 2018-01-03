@@ -10,10 +10,21 @@ use std::env::Args;
 ///
 /// ## Example
 /// ```
-/// Config::parse_args(args).unwrap_or_else(exit_gracefully)
-/// ```
+/// # extern crate minigrep_lib;
 ///
-fn exit_gracefully<E: std::fmt::Debug, T: std::fmt::Debug>(msg: E) -> T{
+/// # fn main(){
+///     use minigrep_lib::Config;
+///     use minigrep_lib::exit_gracefully;
+///     use std::env;
+///     use std::env::Args;
+///
+///     let mut args : Args = env::args();
+///     Config::parse_args(args).unwrap_or_else(exit_gracefully);
+/// }
+/// ```
+
+///
+pub fn exit_gracefully<E: std::fmt::Debug, T: std::fmt::Debug>(msg: E) -> T{
     eprintln!("Problem running minigrep: {:?}", msg);
     process::exit(1);
 }
@@ -34,7 +45,7 @@ impl Config{
 
     /// Parses the arguments to the program<br>
     /// Parameter is the arguments iterator
-    fn parse_args (mut args: Args) -> Result<Config, &'static str>{
+    pub fn parse_args (mut args: Args) -> Result<Config, &'static str>{
         if args.len() != 3 {return Err("USAGE: minigrep <query> <filename>");}
         args.next(); // first argument is program name
 
@@ -65,8 +76,16 @@ fn open_file (config: &Config) -> File{
 }
 
 
+/// Lifetimes: Search results should live as long as the contents to search<br><br>
+///
 /// Search for the query in the contents<br>
-/// Lifetimes: Search results should live as long as the contents to search
+///    let query = "duct";
+///    let contents =
+///        "Rust:
+///        safe, fast, productive.
+///        Pick three.";
+///
+///    assert_eq!(vec!["safe, fast, productive."], search(query, contents));
 pub fn search<'a>(query: &str, contents: &'a str) -> Vec<&'a str>{
     contents.lines().filter(|x| x.contains(query)).map(|x| x.trim()).collect()
 }
