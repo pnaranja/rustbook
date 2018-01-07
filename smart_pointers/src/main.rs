@@ -1,3 +1,5 @@
+use std::ops::Deref;
+
 enum List{
     Cons (i32, Box<List>),
     Nil
@@ -21,11 +23,55 @@ fn boxes() {
     let y = Box::new(x) ;
 
     assert_eq! (5, x);
-    assert_eq! (5, *y);
+    assert_eq! (5, *y); // *(y.deref())
 }
 
+
+/// myBox is defined in shorthand to:
+/// ```
+/// struct myBox<T>{
+///     x : T
+/// }
+/// ```
 struct myBox<T> (T);
+
+impl<T> myBox<T>{
+    fn new (x:T) -> myBox<T>{
+        myBox(x)
+    }
+}
+
+impl<T> Deref for myBox<T>{
+    type Target = T; // Target is an associated type
+
+    fn deref (&self) -> &T{
+        &self.0 // access a struct's first field with self.0
+    }
+}
+
+fn use_my_box (){
+    let x = 5;
+    let y = myBox::new(x) ;
+
+    assert_eq! (5, x);
+    assert_eq! (5, *y); // myBox needs to implement DeRef
+}
+
+/// Rust can call deref multiple times in order to get the correct type
+fn implicit_deref_coercion(){
+    let name = myBox::new(String::from("Paul"));
+    
+    // Rust turns &myBox<String> -> &String by calling deref.  Then &String -> &str by calling deref again
+    print_inside_box(&name); 
+
+}
+
+fn print_inside_box(a : &str){
+    println! ("Oh, hello {}", a);
+}
 
 fn main (){
     boxes();
+    use_my_box();
+    implicit_deref_coercion();
 }
