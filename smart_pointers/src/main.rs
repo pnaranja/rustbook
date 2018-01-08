@@ -1,4 +1,5 @@
 use std::ops::Deref;
+use std::fmt::Debug;
 
 enum List{
     Cons (i32, Box<List>),
@@ -33,15 +34,15 @@ fn boxes() {
 ///     x : T
 /// }
 /// ```
-struct myBox<T> (T);
+struct myBox<T: Debug> (T);
 
-impl<T> myBox<T>{
+impl<T: Debug> myBox<T>{
     fn new (x:T) -> myBox<T>{
         myBox(x)
     }
 }
 
-impl<T> Deref for myBox<T>{
+impl<T: Debug> Deref for myBox<T>{
     type Target = T; // Target is an associated type
 
     fn deref (&self) -> &T{
@@ -55,6 +56,9 @@ fn use_my_box (){
 
     assert_eq! (5, x);
     assert_eq! (5, *y); // myBox needs to implement DeRef
+
+    println!("Dropping myBox earlier");
+    std::mem::drop(y);
 }
 
 /// Rust can call deref multiple times in order to get the correct type
@@ -68,6 +72,12 @@ fn implicit_deref_coercion(){
 
 fn print_inside_box(a : &str){
     println! ("Oh, hello {}", a);
+}
+
+impl<T : Debug> Drop for myBox<T>{
+    fn drop(&mut self){
+        println!("Dropping myBox with data: {:?}", self.0);
+    }
 }
 
 fn main (){
