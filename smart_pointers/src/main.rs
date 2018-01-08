@@ -57,8 +57,8 @@ fn use_my_box (){
     assert_eq! (5, x);
     assert_eq! (5, *y); // myBox needs to implement DeRef
 
-    println!("Dropping myBox earlier");
     std::mem::drop(y);
+    println!("Dropping myBox earlier");
 }
 
 /// Rust can call deref multiple times in order to get the correct type
