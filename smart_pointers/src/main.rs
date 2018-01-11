@@ -103,7 +103,7 @@ fn three_lists(){
 /// Using Rc allows a single value ("_a") to have multiple owners (via immutable refs)
 /// Using Rc::clone increasing the reference count to a
 /// We could have used a2.clone() but that would have been a deep copy
-fn three_lists_using_Rc(){
+fn three_lists_using_rc(){
 
     let __a = RcCons(5, Rc::new(RcCons(10, Rc::new(RcNil))));
     let _a = Rc::new(__a); //need to create a new instance of Rc of the RcList in order for Rc::clone
@@ -121,10 +121,24 @@ fn three_lists_using_Rc(){
 
 }
 
+use std::cell::RefCell;
+
+/// RefCell<T> will have Rust check borrowing rules at RUNTIME instead of compile time
+fn mut_borrow_to_immut_value(){
+    let x = vec![3,4];
+    //let y = &mut x; // won't work because x is not mutable
+    let y = RefCell::new(x);
+    y.borrow_mut().push(5);
+
+    assert_eq! (y.into_inner(), vec![3,4,5]);
+
+}
+
 fn main (){
     boxes();
     use_my_box();
     implicit_deref_coercion();
     three_lists();
-    three_lists_using_Rc();
+    three_lists_using_rc();
+    mut_borrow_to_immut_value();
 }
