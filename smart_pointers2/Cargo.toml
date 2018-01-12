@@ -1,0 +1,6 @@
+[package]
+name = "smart_pointers2"
+version = "0.1.0"
+authors = ["pnaranja <paul.naranja@gmail.com>"]
+
+[dependencies]
