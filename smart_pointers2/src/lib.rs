@@ -40,20 +40,24 @@ impl <'a, T : Messenger> LimitTracker<'a, T>{
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::cell::RefCell;
 
     struct MockMessenger{
-        sent_messages: Vec<String>
+        sent_messages: RefCell<Vec<String>>
     }
 
     impl MockMessenger{
         fn new() -> MockMessenger{
-            MockMessenger{sent_messages : vec![]}
+            MockMessenger{sent_messages : RefCell::new(vec![])}
         }
     }
 
+    /// We can't modify the sent_messages because the send method takes an
+    /// immutable reference to self - which is defined in the Messenger trait
+    /// So store the sent_messages within a RefCell!
     impl Messenger for MockMessenger{
         fn send(&self, msg : &str){
-            self.sent_messages.push(String::from(msg));
+            self.sent_messages.borrow_mut().push(String::from(msg));
         }
     }
 
@@ -61,7 +65,9 @@ mod tests {
     fn send_over_75_percent() {
         let mock_messenger = MockMessenger::new();
 
-        let tracker = LimitTracker::new(&mock_messenger, 100);
+        let mut tracker = LimitTracker::new(&mock_messenger, 100);
         tracker.set_value_send_msg(80);
+
+        assert_eq!(mock_messenger.sent_messages.borrow().len(), 1);
     }
 }
