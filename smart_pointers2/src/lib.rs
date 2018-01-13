@@ -34,6 +34,16 @@ impl <'a, T : Messenger> LimitTracker<'a, T>{
     }
 }
 
+use std::rc::Rc;
+use std::cell::RefCell;
+
+/// New List that uses Rc and RefCell
+/// It can have multiple owners and by mutable
+#[derive(Debug)]
+enum List{
+    Cons(Rc<RefCell<i32>>, Rc<List>),
+    Nil
+}
 
 
 /// In our tests, create an object to mock sending messages
@@ -58,6 +68,11 @@ mod tests {
     impl Messenger for MockMessenger{
         fn send(&self, msg : &str){
             self.sent_messages.borrow_mut().push(String::from(msg));
+
+            // This will panic at runtime because of two mutable references
+            // of the sent_messages vector in the same scope
+//            let mut mut_borrow1 = self.sent_messages.borrow_mut();
+//            let mut mut_borrow2 = self.sent_messages.borrow_mut();
         }
     }
 
@@ -70,4 +85,26 @@ mod tests {
 
         assert_eq!(mock_messenger.sent_messages.borrow().len(), 1);
     }
+
+
+    // Test new List
+    use List::{Cons, Nil};
+
+    #[test]
+    fn test_new_list(){
+        let value = Rc::new(RefCell::new(5));
+        let a = Rc::new(Cons(Rc::clone(&value), Rc::new(Nil)));
+        let b = Rc::new(Cons(Rc::new(RefCell::new(6)), Rc::clone(&a)));
+        let c = Rc::new(Cons(Rc::new(RefCell::new(9)), Rc::clone(&a)));
+
+        *value.borrow_mut() += 20;
+
+        println!("a = {:?}", a);
+        println!("b = {:?}", b);
+        println!("c = {:?}", c);
+        // a = Cons(RefCell { value: 25 }, Nil)
+        // b = Cons(RefCell { value: 6 }, Cons(RefCell { value: 25 }, Nil))
+        // c = Cons(RefCell { value: 9 }, Cons(RefCell { value: 25 }, Nil))
+    }
+
 }
