@@ -38,7 +38,7 @@ use std::rc::Rc;
 use std::cell::RefCell;
 
 /// New List that uses Rc and RefCell
-/// It can have multiple owners and by mutable
+/// It can have multiple owners and be mutable
 #[derive(Debug)]
 enum List{
     Cons(Rc<RefCell<i32>>, Rc<List>),
@@ -84,6 +84,8 @@ mod tests {
         tracker.set_value_send_msg(80);
 
         assert_eq!(mock_messenger.sent_messages.borrow().len(), 1);
+        assert_eq!(mock_messenger.sent_messages.borrow().to_owned().get(0).unwrap(),
+                   "Used up 75% of quota");
     }
 
 
