@@ -1,3 +1,21 @@
+//! A general function that will print a general message to std err and exit the program
+//! Intended to be used using unwrap_or_else
+//!
+//! ## Example
+//! ```
+//! # extern crate minigrep_lib;
+//!
+//! # fn main(){
+//!     use minigrep_lib::Config;
+//!     use minigrep_lib::exit_gracefully;
+//!     use std::env;
+//!     use std::env::Args;
+//!
+//!     let mut args : Args = env::args();
+//!     Config::parse_args(args).unwrap_or_else(exit_gracefully);
+//! }
+//! ```
+
 use std::fs::File;
 use std::io::Read;
 use std::process;
@@ -5,25 +23,7 @@ use std::error::Error;
 use std::env;
 use std::env::Args;
 
-/// A general function that will print a general message to std err and exit the program
-/// Intended to be used using unwrap_or_else
-///
-/// ## Example
-/// ```
-/// # extern crate minigrep_lib;
-///
-/// # fn main(){
-///     use minigrep_lib::Config;
-///     use minigrep_lib::exit_gracefully;
-///     use std::env;
-///     use std::env::Args;
-///
-///     let mut args : Args = env::args();
-///     Config::parse_args(args).unwrap_or_else(exit_gracefully);
-/// }
-/// ```
 
-///
 pub fn exit_gracefully<E: std::fmt::Debug, T: std::fmt::Debug>(msg: E) -> T{
     eprintln!("Problem running minigrep: {:?}", msg);
     process::exit(1);
