@@ -70,7 +70,7 @@ struct Node {
 }
 
 
-fn tree_example() {
+fn tree_example1() {
     let leaf = Rc::new(Node {
         value: 3,
         children: RefCell::new(vec![]),
@@ -109,10 +109,24 @@ fn tree_example2() {
     });
 
     // mutating the RefCell's weak reference
+    // Obtain the reference of the parent (borrow_mut) and dereference to expose Weak<Node2>
+    // downgrade() returns a weak reference of it's parameter (&branch)
     *leaf.parent.borrow_mut() = Rc::downgrade(&branch);
 
     // upgrade() returns an Optional Rc
+    // This will NOT have an infinite output because no cyclical reference (unlike tree_example1)
     println!("Parent's leaf is {:?}", leaf.parent.borrow().upgrade().unwrap());
+}
+
+fn tree_example2_exposed() {
+    //Create and then mutate it's parent!
+    let leaf = Rc::new(Node2 {
+        value: 3,
+        children: RefCell::new(vec![]),
+        parent: RefCell::new(Weak::new()),
+    });
+
+    println!("leaf strong = {}, weak = {}", Rc::strong_count(&leaf), Rc::weak_count(&leaf));
 }
 
 fn main() {
