@@ -1,4 +1,4 @@
-use std::rc::Rc;
+use std::rc::{Rc, Weak};
 use std::cell::RefCell;
 use List::{Cons, Nil};
 
@@ -24,7 +24,10 @@ impl List {
 
 
 /// Create two lists that point to each other
-fn main() {
+fn cyclical_references() {
+    //Rc::strong_count increases the strong count of the Rc instance
+    //Rc instances will be cleaned only after the strong count is 0
+
     let a = Rc::new(Cons(5, RefCell::new(Rc::new(Nil))));
     println!("a initial Rc count: {}", Rc::strong_count(&a));
     println!("a = {:?}", a);
@@ -49,4 +52,69 @@ fn main() {
 
     // Uncommenting this should overflow stack because we have a reference cycle
     //println!("a = {:?}", a);
+    println!("\n\n\n")
+}
+
+
+// Create weak references by Rc::downgrade
+// Weak count does NOT need to be 0 for the Rc instance to be cleaned up
+// Therefore need to check if weak reference is still valid by calling upgrade which returns
+// an Option<Rc<T>>
+
+// Node that has it's value and reference to it's childrens' node (Vec<Rc<Node>>)
+// Rc<Node>: Node should be able to share children ownership with variables to access each Node directly
+// RefCell<T>: Node should be able to share children ownership with variables to access each Node directly
+struct Node {
+    value: i32,
+    children: RefCell<Vec<Rc<Node>>>,
+}
+
+
+fn tree_example() {
+    let leaf = Rc::new(Node {
+        value: 3,
+        children: RefCell::new(vec![]),
+    });
+
+    // branch can access leaf by branch.children
+    let branch = Rc::new(Node {
+        value: 3,
+        children: RefCell::new(vec![Rc::clone(&leaf)]),
+    });
+
+    // But no way for leaf to access branch!
+    // Node should add a parent reference
+}
+
+// Dropping a leaf DOES NOT mean you have to drop the branch -> should make this a weak reference
+#[derive(Debug)]
+struct Node2 {
+    value: i32,
+    children: RefCell<Vec<Rc<Node2>>>,
+    parent: RefCell<Weak<Node2>>,
+}
+
+fn tree_example2() {
+    //Create and then mutate it's parent!
+    let leaf = Rc::new(Node2 {
+        value: 3,
+        children: RefCell::new(vec![]),
+        parent: RefCell::new(Weak::new()),
+    });
+
+    let branch = Rc::new(Node2 {
+        value: 3,
+        children: RefCell::new(vec![Rc::clone(&leaf)]),
+        parent: RefCell::new(Weak::new()),
+    });
+
+    // mutating the RefCell's weak reference
+    *leaf.parent.borrow_mut() = Rc::downgrade(&branch);
+
+    println!("Parent's leaf is {:?}", leaf.parent.borrow().upgrade().unwrap());
+}
+
+fn main() {
+    cyclical_references();
+    tree_example2()
 }
