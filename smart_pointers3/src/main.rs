@@ -4,11 +4,11 @@ use List::{Cons, Nil};
 
 #[derive(Debug)]
 enum List {
-    //      |-------------------------------------------------------------------
-    //      |                                                                  |
-    //      v                                                                  |
+    //                     |-----------------------------------------
+    //                     |                                        |
+    //                     v                                        |
     Cons(i32, RefCell<Rc<List>>),
-    //RefCell so we can modify the List, that Cons is referring to
+    //Use RefCell so we can modify the List, that Cons is referring to
     Nil,
 }
 
@@ -61,9 +61,9 @@ fn cyclical_references() {
 // Therefore need to check if weak reference is still valid by calling upgrade which returns
 // an Option<Rc<T>>
 
-// Node that has it's value and reference to it's childrens' node (Vec<Rc<Node>>)
+// Node that has it's value and reference to it's childrens' nodes (Vec<Rc<Node>>)
 // Rc<Node>: Node should be able to share children ownership with variables to access each Node directly
-// RefCell<T>: Node should be able to share children ownership with variables to access each Node directly
+// RefCell<T>: To modify which nodes are children of another node
 struct Node {
     value: i32,
     children: RefCell<Vec<Rc<Node>>>,
@@ -111,6 +111,7 @@ fn tree_example2() {
     // mutating the RefCell's weak reference
     *leaf.parent.borrow_mut() = Rc::downgrade(&branch);
 
+    // upgrade() returns an Optional Rc
     println!("Parent's leaf is {:?}", leaf.parent.borrow().upgrade().unwrap());
 }
 
