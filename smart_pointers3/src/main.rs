@@ -126,10 +126,37 @@ fn tree_example2_exposed() {
         parent: RefCell::new(Weak::new()),
     });
 
+    println!("Created leaf");
     println!("leaf strong = {}, weak = {}", Rc::strong_count(&leaf), Rc::weak_count(&leaf));
+
+    {
+        let branch = Rc::new(Node2 {
+            value: 3,
+            children: RefCell::new(vec![Rc::clone(&leaf)]),
+            parent: RefCell::new(Weak::new()),
+        });
+
+        // mutating the RefCell's weak reference
+        // Obtain the reference of the parent (borrow_mut) and dereference to expose Weak<Node2>
+        // downgrade() returns a weak reference of it's parameter (&branch)
+        *leaf.parent.borrow_mut() = Rc::downgrade(&branch);
+
+        println!("\nInside block");
+        println!("Created branch with a weak reference of it's children to leaf");
+        println!("Modified leaf's parent to be a weak reference to branch");
+        println!("branch strong = {}, weak = {} because of leaf.parent pointing to branch"
+                 , Rc::strong_count(&branch), Rc::weak_count(&branch));
+        println!("leaf strong = {}, weak = {} because branch has a clone of Rc of leaf in branch.children"
+                 , Rc::strong_count(&leaf), Rc::weak_count(&leaf));
+    }
+
+    println!("\nOutside block");
+    println!("leaf parent: {:?}", leaf.parent.borrow().upgrade());
+    println!("leaf strong = {}, weak = {}", Rc::strong_count(&leaf), Rc::weak_count(&leaf));
+
 }
 
 fn main() {
     cyclical_references();
-    tree_example2()
+    tree_example2_exposed();
 }
