@@ -3,6 +3,8 @@
 // Once the post is approved, it gets published.
 // Only published blog posts return content to print, so unapproved posts can’t accidentally be published.
 
+use std::process;
+
 pub struct Post{
     state: Option<Box<State>>,
     content: String
@@ -25,6 +27,12 @@ impl Post{
     // PlaceHolder - Return empty string for now.  Later need to check state
     pub fn content(&self) -> &str{
         ""
+    }
+
+    // take() will return the Option<Box<State>> and replace self.state with None using
+    // core::mem::replace(self,None) - https://doc.rust-lang.org/core/mem/fn.replace.html
+    pub fn request_review(&mut self){
+        self.state = Some(self.state.take().unwrap_or_else(||process::exit(1)).request_review());
     }
 
 }
