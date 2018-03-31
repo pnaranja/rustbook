@@ -1,7 +1,7 @@
-// A blog post starts as an empty draft.
-// Once the draft is done, a review of the post is requested.
-// Once the post is approved, it gets published.
-// Only published blog posts return content to print, so unapproved posts can’t accidentally be published.
+/// A blog post starts as an empty draft.
+/// Once the draft is done, a review of the post is requested.
+/// Once the post is approved, it gets published.
+/// Only published blog posts return content to print, so unapproved posts can’t accidentally be published.
 
 use std::process;
 
