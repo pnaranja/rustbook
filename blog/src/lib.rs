@@ -10,14 +10,16 @@ pub struct Post{
     content: String
 }
 
+
 impl Post{
-    fn new() -> Post{
-        /// A new blog post will start with a draft state
+    /// A new blog post will start with a draft state
+    pub fn new() -> Post{
         Post{
             state : Some (Box::new(Draft {})),
             content : String::new()
         }
     }
+
 
     /// Need a mutating self reference since content is changing
     pub fn add_text(&mut self, text : &str){
@@ -26,17 +28,17 @@ impl Post{
 
     /// PlaceHolder - Return empty string for now.  Later need to check state
     pub fn content(&mut self) -> &str{
-        self.state.take().unwrap_or_else(||process::exit(1)).content(self)
+        self.state.take().unwrap_or_else(||{println!("ERROR");process::exit(1)}).content(self)
     }
 
     /// take() will return the Option<Box<State>> and replace self.state with None using
     /// core::mem::replace(self,None) - https://doc.rust-lang.org/core/mem/fn.replace.html
     pub fn request_review(&mut self){
-        self.state = Some(self.state.take().unwrap_or_else(||process::exit(1)).request_review());
+        self.state = Some(self.state.take().unwrap_or_else(||{println!("ERROR");process::exit(1);}).request_review());
     }
 
     pub fn approve(&mut self){
-        self.state = Some(self.state.take().unwrap_or_else(||process::exit(1)).approve());
+        self.state = Some(self.state.take().unwrap_or_else(||{println!("ERROR");process::exit(1);}).approve());
     }
 
 }
