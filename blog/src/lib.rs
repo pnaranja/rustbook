@@ -21,20 +21,22 @@ impl Post{
 
 
 
+    /// Add text to content
     /// Need a mutating self reference since content is changing
     pub fn add_text(&mut self, text : &str){
         self.content =
             self.state.as_ref() // Since self is a ref, the contents of self needs to be a ref?
                 .unwrap_or_else(||{println!("ERROR attempting to add text");process::exit(1)})
-                .add_text(self, text).to_string();
+                .check_text(self, text);
     }
 
-    /// Returns content depedent on the state
+    /// Returns content dependant on the state
     pub fn content(&self) -> &str{
         self.state.as_ref() // Since self is a ref, the contents of self needs to be a ref?
             .unwrap_or_else(||{println!("ERROR retrieving content");process::exit(1)}).content(self)
     }
 
+    /// Put Draft state to Pending Review
     /// take() will return the Option<Box<State>> and replace self.state with None using
     /// core::mem::replace(self,None) - https://doc.rust-lang.org/core/mem/fn.replace.html
     pub fn request_review(&mut self){
@@ -43,6 +45,7 @@ impl Post{
                         .request_review());
     }
 
+    /// Approve content and set state to Publish
     pub fn approve(&mut self){
         self.state = Some(self.state.take()
                         .unwrap_or_else(||{println!("ERROR attempting to approve");process::exit(1);})
@@ -55,7 +58,7 @@ trait State {
     fn request_review(self : Box<Self>) -> Box<State>;
     fn approve(self: Box<Self>) -> Box<State>;
     fn content<'a>(&self, post: &'a Post)->&'a str;
-    fn add_text<'a>(&self, post: &'a Post, new_content: &'a str)->&'a str;
+    fn check_text<'a>(&self, post: &'a Post, new_content: &'a str) -> String;
 }
 
 /// Represent the Draft State
@@ -74,7 +77,9 @@ impl State for Draft {
     fn content<'a>(&self, _post: &'a Post) -> &'a str{""}
 
     /// Add text if in a Draft state
-    fn add_text<'a>(&self, _post: &'a Post, new_content: &'a str) -> &'a str{ new_content }
+    fn check_text<'a>(&self, post: &'a Post, new_content: &'a str) -> String{
+        format!("{}{}", post.content.clone(), new_content)
+    }
 }
 
 /// Represent the Pending Review State
@@ -93,7 +98,7 @@ impl State for PendingReview {
     fn content<'a>(&self, _post: &'a Post) -> &'a str{""}
 
     /// Can only add more text if in a Draft state.  Just return the post's original content
-    fn add_text<'a>(&self, post: &'a Post, _new_content: &'a str) -> &'a str{ post.content.as_ref() }
+    fn check_text<'a>(&self, post: &'a Post, _new_content: &'a str) -> String{ post.content.clone() }
 }
 
 /// Represent the Published state.  This is when a Pending Review gets approved
@@ -112,5 +117,5 @@ impl State for Publish{
     }
 
     /// Can only add more text if in a Draft state.  Just return the post's original content
-    fn add_text<'a>(&self, post: &'a Post, _new_content: &'a str) -> &'a str{ post.content.as_ref() }
+    fn check_text<'a>(&self, post: &'a Post, _new_content: &'a str) -> String { post.content.clone() }
 }
