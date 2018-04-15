@@ -10,7 +10,6 @@ pub struct Post{
     content: String
 }
 
-
 impl Post{
     /// A new blog post will start with a draft state
     pub fn new() -> Post{
@@ -21,24 +20,30 @@ impl Post{
     }
 
 
+
     /// Need a mutating self reference since content is changing
     pub fn add_text(&mut self, text : &str){
         self.content.push_str(text);
     }
 
     /// PlaceHolder - Return empty string for now.  Later need to check state
-    pub fn content(&mut self) -> &str{
-        self.state.take().unwrap_or_else(||{println!("ERROR");process::exit(1)}).content(self)
+    pub fn content(&self) -> &str{
+        self.state.as_ref() // Since self is a ref, the contents of self needs to be a ref?
+            .unwrap_or_else(||{println!("ERROR retrieving content");process::exit(1)}).content(self)
     }
 
     /// take() will return the Option<Box<State>> and replace self.state with None using
     /// core::mem::replace(self,None) - https://doc.rust-lang.org/core/mem/fn.replace.html
     pub fn request_review(&mut self){
-        self.state = Some(self.state.take().unwrap_or_else(||{println!("ERROR");process::exit(1);}).request_review());
+        self.state = Some(self.state.take()
+                        .unwrap_or_else(||{println!("ERROR requesting review");process::exit(1);})
+                        .request_review());
     }
 
     pub fn approve(&mut self){
-        self.state = Some(self.state.take().unwrap_or_else(||{println!("ERROR");process::exit(1);}).approve());
+        self.state = Some(self.state.take()
+                        .unwrap_or_else(||{println!("ERROR attempting to approve");process::exit(1);})
+                        .approve());
     }
 
 }
@@ -62,7 +67,7 @@ impl State for Draft {
     fn approve(self: Box<Self>) -> Box<State>{ self }
 
     /// Unapproved content returns an empty string
-    fn content<'a>(&self, post: &'a Post) -> &'a str{""}
+    fn content<'a>(&self, _post: &'a Post) -> &'a str{""}
 }
 
 /// Represent the Pending Review State
@@ -78,7 +83,7 @@ impl State for PendingReview {
     fn approve(self: Box<Self>) -> Box<State>{ Box::new(Publish {}) }
 
     /// Unapproved content returns an empty string
-    fn content<'a>(&self, post: &'a Post) -> &'a str{""}
+    fn content<'a>(&self, _post: &'a Post) -> &'a str{""}
 }
 
 /// Represent the Published state.  This is when a Pending Review gets approved
