@@ -1,4 +1,5 @@
 extern crate blog;
+
 use blog::Post;
 
 fn main(){
@@ -13,8 +14,11 @@ fn main(){
     // Verify post content returns empty string if state is Request Review
     assert_eq!("", post.content());
 
+    // This should be ignored
+    post.add_text(".  And then I went to bed");
+
     post.approve();
-    // Verify post content returns the expected string if state is Publish
+    // Verify post content returns only the post_msg
     assert_eq!(post_msg, post.content());
 
 

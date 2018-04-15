@@ -23,10 +23,13 @@ impl Post{
 
     /// Need a mutating self reference since content is changing
     pub fn add_text(&mut self, text : &str){
-        self.content.push_str(text);
+        self.content =
+            self.state.as_ref() // Since self is a ref, the contents of self needs to be a ref?
+                .unwrap_or_else(||{println!("ERROR attempting to add text");process::exit(1)})
+                .add_text(self, text).to_string();
     }
 
-    /// PlaceHolder - Return empty string for now.  Later need to check state
+    /// Returns content depedent on the state
     pub fn content(&self) -> &str{
         self.state.as_ref() // Since self is a ref, the contents of self needs to be a ref?
             .unwrap_or_else(||{println!("ERROR retrieving content");process::exit(1)}).content(self)
@@ -52,6 +55,7 @@ trait State {
     fn request_review(self : Box<Self>) -> Box<State>;
     fn approve(self: Box<Self>) -> Box<State>;
     fn content<'a>(&self, post: &'a Post)->&'a str;
+    fn add_text<'a>(&self, post: &'a Post, new_content: &'a str)->&'a str;
 }
 
 /// Represent the Draft State
@@ -68,6 +72,9 @@ impl State for Draft {
 
     /// Unapproved content returns an empty string
     fn content<'a>(&self, _post: &'a Post) -> &'a str{""}
+
+    /// Add text if in a Draft state
+    fn add_text<'a>(&self, _post: &'a Post, new_content: &'a str) -> &'a str{ new_content }
 }
 
 /// Represent the Pending Review State
@@ -84,6 +91,9 @@ impl State for PendingReview {
 
     /// Unapproved content returns an empty string
     fn content<'a>(&self, _post: &'a Post) -> &'a str{""}
+
+    /// Can only add more text if in a Draft state.  Just return the post's original content
+    fn add_text<'a>(&self, post: &'a Post, _new_content: &'a str) -> &'a str{ post.content.as_ref() }
 }
 
 /// Represent the Published state.  This is when a Pending Review gets approved
@@ -100,4 +110,7 @@ impl State for Publish{
     fn content<'a>(&self, post: &'a Post) -> &'a str{
         post.content.as_ref()
     }
+
+    /// Can only add more text if in a Draft state.  Just return the post's original content
+    fn add_text<'a>(&self, post: &'a Post, _new_content: &'a str) -> &'a str{ post.content.as_ref() }
 }
