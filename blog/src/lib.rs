@@ -45,11 +45,18 @@ impl Post{
                         .request_review());
     }
 
-    /// Approve content and set state to Publish
+    /// Approve content and set state to Publish if it's been reviewed
     pub fn approve(&mut self){
         self.state = Some(self.state.take()
                         .unwrap_or_else(||{println!("ERROR attempting to approve");process::exit(1);})
                         .approve());
+    }
+
+    /// Reject content and set state to Draft if it's been reviewed
+    pub fn reject(&mut self){
+        self.state = Some(self.state.take()
+            .unwrap_or_else(||{println!("ERROR attempting to approve");process::exit(1);})
+            .reject());
     }
 
 }
@@ -57,6 +64,7 @@ impl Post{
 trait State {
     fn request_review(self : Box<Self>) -> Box<State>;
     fn approve(self: Box<Self>) -> Box<State>;
+    fn reject(self: Box<Self>) -> Box<State>;
     fn content<'a>(&self, post: &'a Post)->&'a str;
     fn check_text<'a>(&self, post: &'a Post, new_content: &'a str) -> String;
 }
@@ -72,6 +80,9 @@ impl State for Draft {
 
     /// Cannot approve a draft.  Needs to be reviewed
     fn approve(self: Box<Self>) -> Box<State>{ self }
+
+    /// Cannot reject a draft.  Needs to be reviewed
+    fn reject(self: Box<Self>) -> Box<State>{ self }
 
     /// Unapproved content returns an empty string
     fn content<'a>(&self, _post: &'a Post) -> &'a str{""}
@@ -94,6 +105,9 @@ impl State for PendingReview {
     /// Approve a pending review should return a publish state
     fn approve(self: Box<Self>) -> Box<State>{ Box::new(Publish {}) }
 
+    /// Reject a pending review should go back to a draft
+    fn reject(self: Box<Self>) -> Box<State>{ Box::new(Draft {}) }
+
     /// Unapproved content returns an empty string
     fn content<'a>(&self, _post: &'a Post) -> &'a str{""}
 
@@ -110,6 +124,9 @@ impl State for Publish{
 
     /// requesting a review or approving a post that is already published doesn't make any sense
     fn approve(self : Box<Self>) -> Box<State>{ self }
+
+    /// Rejecting a post that is already published doesn't make any sense
+    fn reject(self : Box<Self>) -> Box<State>{ self }
 
     /// Return published content
     fn content<'a>(&self, post: &'a Post) -> &'a str{
