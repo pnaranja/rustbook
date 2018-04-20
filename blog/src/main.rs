@@ -26,9 +26,18 @@ fn main(){
     // This should be ignored because not a draft anymore
     post.add_text("But then I got up again. ");
 
+    post.approve(); // Need 2 approvals to publish
+    // Verify post content returns only the post_msg
+    assert_eq!("", post.content());
+
+    post.reject();
+    post.request_review();
+
+    post.approve(); // Lost the last review.  Still need 2 approvals
+    assert_eq!("", post.content());
+
     post.approve();
     // Verify post content returns only the post_msg
     assert_eq!(format!("{}{}{}", post_msg, post_msg2, post_msg3), post.content());
-
 
 }

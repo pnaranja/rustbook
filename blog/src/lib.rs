@@ -75,7 +75,7 @@ struct Draft {}
 impl State for Draft {
     /// Requesting a review for a draft returns an pending review state
     fn request_review (self:Box<Self>) -> Box<State>{
-        Box::new(PendingReview {})
+        Box::new(PendingReview { previous_approvals: 0 })
     }
 
     /// Cannot approve a draft.  Needs to be reviewed
@@ -94,7 +94,9 @@ impl State for Draft {
 }
 
 /// Represent the Pending Review State
-struct PendingReview {}
+struct PendingReview {
+    previous_approvals: i8
+}
 
 impl State for PendingReview {
     /// request a review for pending review state returns itself, since it's already in review!
@@ -103,7 +105,13 @@ impl State for PendingReview {
     }
 
     /// Approve a pending review should return a publish state
-    fn approve(self: Box<Self>) -> Box<State>{ Box::new(Publish {}) }
+    fn approve(self: Box<Self>) -> Box<State> {
+        if self.previous_approvals == 1 {
+            Box::new(Publish {})
+        } else {
+            Box::new(PendingReview { previous_approvals: self.previous_approvals + 1 })
+        }
+    }
 
     /// Reject a pending review should go back to a draft
     fn reject(self: Box<Self>) -> Box<State>{ Box::new(Draft {}) }
