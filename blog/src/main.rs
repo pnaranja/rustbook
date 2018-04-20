@@ -2,7 +2,7 @@ extern crate blog;
 
 use blog::Post;
 
-fn main(){
+fn main() {
     let mut post = Post::new();
     let post_msg = "I went to work today. ";
     let post_msg2 = "And then I went to bed. ";
@@ -39,5 +39,4 @@ fn main(){
     post.approve();
     // Verify post content returns only the post_msg
     assert_eq!(format!("{}{}{}", post_msg, post_msg2, post_msg3), post.content());
-
 }
