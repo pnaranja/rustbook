@@ -1,9 +1,31 @@
-extern crate blog;
+//extern crate blog;
+//
+//use blog::Post;
 
-use blog::Post;
+mod post;
+mod post2;
 
 fn main() {
-    let mut post = Post::new();
+    test_post();
+    test_post2()
+}
+
+fn test_post2() {
+    let mut post = post2::Post2::new();
+    let post_msg = "I went to work today. ";
+    let post_msg2 = "And then I went to bed. ";
+    let post_msg3 = "And had a good sleep. ";
+
+    post.add_text(post_msg);
+    post.add_text(post_msg2);
+    post.add_text(post_msg3);
+
+    let approved_post = post.request_review().approve();
+    println!("{}", approved_post.content());
+}
+
+fn test_post() {
+    let mut post = post::Post::new();
     let post_msg = "I went to work today. ";
     let post_msg2 = "And then I went to bed. ";
     let post_msg3 = "And had a good sleep. ";
