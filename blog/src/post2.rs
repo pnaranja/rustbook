@@ -31,8 +31,9 @@ impl Post2 {
 }
 
 impl DraftPost {
-    pub fn add_text(&mut self, text: &str) {
+    pub fn add_text(&mut self, text: &str) -> &mut DraftPost {
         self.content.push_str(text);
+        self
     }
 
     pub fn request_review(self) -> PendingReviewPost {
@@ -45,6 +46,12 @@ impl DraftPost {
 impl PendingReviewPost {
     pub fn approve(self) -> Post2 {
         Post2 {
+            content: self.content
+        }
+    }
+
+    pub fn reject(self) -> DraftPost {
+        DraftPost {
             content: self.content
         }
     }

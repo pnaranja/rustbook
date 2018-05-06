@@ -16,11 +16,10 @@ fn test_post2() {
     let post_msg2 = "And then I went to bed. ";
     let post_msg3 = "And had a good sleep. ";
 
-    post.add_text(post_msg);
-    post.add_text(post_msg2);
-    post.add_text(post_msg3);
+    post.add_text(post_msg).add_text(post_msg2).add_text(post_msg3);
 
-    let approved_post = post.request_review().approve();
+    let rejected_post = post.request_review().reject();
+    let approved_post = rejected_post.request_review().approve();
     println!("{}", approved_post.content());
 }
 
