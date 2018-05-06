@@ -19,7 +19,11 @@ fn test_post2() {
     post.add_text(post_msg).add_text(post_msg2).add_text(post_msg3);
 
     let rejected_post = post.request_review().reject();
-    let approved_post = rejected_post.request_review().approve();
+    let almost_approved_post = rejected_post.request_review().approve();
+    let rejected_again_post = almost_approved_post.reject();
+
+    let almost_approved_post2 = rejected_again_post.request_review().approve();
+    let approved_post = almost_approved_post2.approve();
     println!("{}", approved_post.content());
 }
 

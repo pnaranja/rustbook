@@ -13,7 +13,11 @@ pub struct DraftPost {
     content: String
 }
 
-pub struct PendingReviewPost {
+pub struct PendingReviewPost1 {
+    content: String
+}
+
+pub struct PendingReviewPost2 {
     content: String
 }
 
@@ -36,14 +40,28 @@ impl DraftPost {
         self
     }
 
-    pub fn request_review(self) -> PendingReviewPost {
-        PendingReviewPost {
+    pub fn request_review(self) -> PendingReviewPost1 {
+        PendingReviewPost1 {
             content: self.content
         }
     }
 }
 
-impl PendingReviewPost {
+impl PendingReviewPost1 {
+    pub fn approve(self) -> PendingReviewPost2 {
+        PendingReviewPost2 {
+            content: self.content
+        }
+    }
+
+    pub fn reject(self) -> DraftPost {
+        DraftPost {
+            content: self.content
+        }
+    }
+}
+
+impl PendingReviewPost2 {
     pub fn approve(self) -> Post2 {
         Post2 {
             content: self.content
@@ -56,4 +74,3 @@ impl PendingReviewPost {
         }
     }
 }
-
