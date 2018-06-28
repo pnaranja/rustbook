@@ -34,8 +34,14 @@ fn main() {
     }
 
     let p = Point{x : 5, y: 9};
-    let Point{x : a, y: b} = p;
-    println! ("Point destructed: a = {}, b = {}", a, b);
+    let Point{x , y} = p;
+    println! ("Point destructed: x = {}, y = {}", x, y);
+
+    match p {
+        Point {x , y: 0} => println!("On the x axis {}", x),
+        Point {x : 0 , y} => println!("On the y axis {}", y),
+        Point {x , y} => println!("On neither axis {} {}", x, y),
+    }
 
 
 }
