@@ -102,5 +102,49 @@ fn main() {
         (first, .., last) => println!("Here the first and last nums: {}, {}", first, last)
     }
 
+    // Create reference patterns
+    let robot_name = Some(String::from("Bors"));
 
+    // Match the reference (&) instead, so robot_name can be printed after
+    match &robot_name {
+        Some(name) => println!("Found a name: {}", name),
+        None => (),
+    }
+
+    let mut robot_name2 = Some(String::from("Cors"));
+    println!("robot_name2 is: {:?}", robot_name2);
+
+    match &mut robot_name2{
+        Some(name) => *name = String::from ("Boris"),
+        None => ()
+    }
+    println!("robot_name2 is now: {:?}", robot_name2);
+
+
+    // Extra conditionals with Match Guards
+    let num = Some (4);
+    match num{
+        Some (x) if x > 5 => println! ("x is greater than 5"),
+        Some (x) => println! ("x is less than or equal to 5"),
+        None => println! ("x is nothing!")
+    }
+
+    let num2 = Some (7);
+    match num2{
+        Some (3) | Some (4) |Some (5)  => println! ("x is 3 to 5"),
+        Some (6) | Some (7) |Some (8)  => println! ("x is 6 to 8"),
+        Some (_) => println! ("x is something"),
+        None => println! ("x is nothing!")
+    }
+
+    // Bindings using @
+    enum Message2{
+        Hello {id:i32}
+    }
+    let msg = Message2::Hello{id : 5};
+    match msg{
+        Message2::Hello{id: id_var @ 1...4} => println! ("id is between 1-4: {}", id_var),
+        Message2::Hello{id: id_var @ 5...7} => println! ("id is between 5-7: {}", id_var),
+        _ => println! ("No idea what the id is")
+    }
 }
