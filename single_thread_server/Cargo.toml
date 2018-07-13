@@ -1,0 +1,6 @@
+[package]
+name = "single_thread_server"
+version = "0.1.0"
+authors = ["Paul Naranja <paul@studyblue.com>"]
+
+[dependencies]
