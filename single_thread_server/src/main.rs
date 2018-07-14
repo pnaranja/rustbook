@@ -1,3 +1,4 @@
+/// Chapter 20.1: Single Threaded Web Server
 use std::fs::File;
 use std::io::Error;
 use std::io::prelude::Read;
@@ -17,6 +18,7 @@ fn main(){
         );
 }
 
+/// Check response and returns 200 if "/" and 404 for anything else
 fn handle_connection(mut stream: TcpStream) -> Result<(TcpStream, String), Error> {
     let mut buffer = [0; 512];
     stream.read(&mut buffer)?;
@@ -24,11 +26,16 @@ fn handle_connection(mut stream: TcpStream) -> Result<(TcpStream, String), Error
     let readfile = |filename| read_file(filename).expect("Could not read html file");
 
     let resp_contents =
-        if buffer.starts_with(b"GET / HTTP/1.1\r\n") { readfile("hello.html") } else { readfile("404.html") };
+        if buffer.starts_with(b"GET / HTTP/1.1\r\n") {
+            format!("HTTP/1.1 200 OK\r\n\r\n{}", readfile("hello.html"))
+        } else {
+            format!("HTTP/1.1 404 NOT FOUND\r\n\r\n{}", readfile("404.html"))
+        };
 
     Ok((stream, resp_contents))
 }
 
+/// Read file and return contents
 fn read_file(file_loc: &str) -> Result<String, Error> {
     let mut file = File::open(file_loc)?;
     let mut contents = String::new();
@@ -37,9 +44,9 @@ fn read_file(file_loc: &str) -> Result<String, Error> {
     Ok(contents)
 }
 
+/// Return response
 fn return_response(mut stream: TcpStream, resp: String) -> Result<(), Error> {
-    let full_resp = format!("HTTP/1.1 200 OK\r\n\r\n{}", resp);
-    stream.write(full_resp.as_bytes())?;
+    stream.write(resp.as_bytes())?;
     stream.flush()?;
     Ok(())
 }
