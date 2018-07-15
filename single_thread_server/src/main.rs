@@ -9,33 +9,27 @@ use std::net::TcpStream;
 fn main(){
     let listener = TcpListener::bind("127.0.0.1:7878").unwrap();
 
-
     listener.incoming().into_iter()
         .map(|stream| stream.expect("Was not able to get connection"))
-        .map(|stream| handle_connection(stream).expect("Could not read stream"))
-        .for_each(|(stream, resp_contents)|
-            return_response(stream, resp_contents.clone()).expect("Could not write to stream")
-        );
+        .for_each(|stream| handle_connection(stream).expect("Could not read stream"));
 }
 
-/// Check response and returns 200 if "/" and 404 for anything else
-fn handle_connection(mut stream: TcpStream) -> Result<(TcpStream, String), Error> {
+/// Check request and returns 200 if "/" and 404 for anything else
+fn handle_connection(mut stream: TcpStream) -> Result<(), Error> {
     let mut buffer = [0; 512];
     stream.read(&mut buffer)?;
 
-    let readfile = |filename| read_file(filename).expect("Could not read html file");
-
     let resp_contents =
         if buffer.starts_with(b"GET / HTTP/1.1\r\n") {
-            format!("HTTP/1.1 200 OK\r\n\r\n{}", readfile("hello.html"))
+            format!("HTTP/1.1 200 OK\r\n\r\n{}", read_file("hello.html")?)
         } else {
-            format!("HTTP/1.1 404 NOT FOUND\r\n\r\n{}", readfile("404.html"))
+            format!("HTTP/1.1 404 NOT FOUND\r\n\r\n{}", read_file("404.html")?)
         };
 
-    Ok((stream, resp_contents))
+    return_response(stream, resp_contents)
 }
 
-/// Read file and return contents
+/// Read file and return contents as a String
 fn read_file(file_loc: &str) -> Result<String, Error> {
     let mut file = File::open(file_loc)?;
     let mut contents = String::new();
