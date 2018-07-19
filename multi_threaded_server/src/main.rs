@@ -1,4 +1,4 @@
-/// Chapter 20.1: Single Threaded Web Server -> 20.2 Spawn Thread for each request
+/// Chapter 20.2: Multi Threaded Web Server
 use std::fs::File;
 use std::io::Error;
 use std::io::prelude::Read;
@@ -9,13 +9,23 @@ use std::net::TcpStream;
 use std::thread;
 use std::time::Duration;
 
+struct ThreadPool;
+
+impl ThreadPool{
+    fn new (size: usize) -> ThreadPool{
+        ThreadPool
+    }
+
+    fn execute<F> (&self, f: F){
+    }
+}
 
 fn main(){
     let listener = TcpListener::bind("127.0.0.1:7878").unwrap();
 
     listener.incoming().into_iter()
-        .map(|stream| stream.expect("Was not able to get connection") )
-        .for_each(| stream| {thread::spawn(|| handle_connection(stream).expect("Could not read stream"));})
+        .map(|stream| (stream.expect("Was not able to get connection"), ThreadPool::new(3)) )
+        .for_each(|(stream, tpool)| tpool.execute(|| handle_connection(stream).expect("Could not read stream")))
 }
 
 /// Check request and returns 200 if "/" and 404 for anything else
