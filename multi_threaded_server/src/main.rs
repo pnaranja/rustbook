@@ -5,26 +5,50 @@ use std::io::prelude::Read;
 use std::io::Write;
 use std::net::TcpListener;
 use std::net::TcpStream;
-
 use std::thread;
 use std::time::Duration;
 
-struct ThreadPool;
+struct Worker {
+    id: usize,
+    handle: thread::JoinHandle<()>,
+}
 
-impl ThreadPool{
-    fn new (size: usize) -> ThreadPool{
-        ThreadPool
-    }
-
-    fn execute<F> (&self, f: F){
+impl Worker {
+    fn new(new_id: usize) -> Worker {
+        Worker { id: new_id, handle: thread::spawn(|| {}) }
     }
 }
 
-fn main(){
+struct ThreadPool {
+    threads: Vec<Worker>
+}
+
+impl ThreadPool {
+    fn new(size: usize) -> ThreadPool {
+        assert!(size > 0);
+
+        // with_capacity is like Vec::new but preallocates space in the vector
+        let mut workers = Vec::with_capacity(size);
+
+        // Need to create threads
+        for id in 0..size {
+            workers.push(Worker::new(id));
+        }
+
+
+        ThreadPool { threads: workers }
+    }
+
+    fn execute<F>(&self, f: F) where F: FnOnce() + Send + 'static {
+        println!("handling connection");
+    }
+}
+
+fn main() {
     let listener = TcpListener::bind("127.0.0.1:7878").unwrap();
 
     listener.incoming().into_iter()
-        .map(|stream| (stream.expect("Was not able to get connection"), ThreadPool::new(3)) )
+        .map(|stream| (stream.expect("Was not able to get connection"), ThreadPool::new(3)))
         .for_each(|(stream, tpool)| tpool.execute(|| handle_connection(stream).expect("Could not read stream")))
 }
 
@@ -41,7 +65,7 @@ fn handle_connection(mut stream: TcpStream) -> Result<(), Error> {
         if ok_req(root_req) {
             format!("HTTP/1.1 200 OK\r\n\r\n{}", read_file("hello.html")?)
         } else if ok_req(sleep_req) {
-            thread::sleep (Duration::from_secs(5));
+            thread::sleep(Duration::from_secs(5));
             format!("HTTP/1.1 200 OK\r\n\r\n{}", read_file("hello.html")?)
         } else {
             format!("HTTP/1.1 404 NOT FOUND\r\n\r\n{}", read_file("404.html")?)
