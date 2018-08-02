@@ -5,40 +5,56 @@ use std::io::prelude::Read;
 use std::io::Write;
 use std::net::TcpListener;
 use std::net::TcpStream;
+use std::sync::Arc;
+use std::sync::mpsc;
+use std::sync::Mutex;
 use std::thread;
 use std::time::Duration;
 
 struct Worker {
     id: usize,
-    handle: thread::JoinHandle<()>,
+    handle: thread::JoinHandle<()>
 }
 
 impl Worker {
-    fn new(new_id: usize) -> Worker {
-        Worker { id: new_id, handle: thread::spawn(|| {}) }
+    fn new(new_id: usize, receiver: Arc<Mutex<mpsc::Receiver<Job>>>) -> Worker {
+        Worker { id: new_id, handle: thread::spawn(|| { receiver; }) }
     }
 }
 
+/// Holds the closures to send down the channel
+struct Job;
+
 struct ThreadPool {
-    threads: Vec<Worker>
+    workers: Vec<Worker>,
+    sender: mpsc::Sender<Job>
 }
 
 impl ThreadPool {
     fn new(size: usize) -> ThreadPool {
         assert!(size > 0);
 
-        // with_capacity is like Vec::new but preallocates space in the vector
+        // Channel to be used to queue jobs
+        // Remember default is multiple producer (sender), single consumer (receiver)
+        let (sender, receiver) = mpsc::channel();
+
+        // Need thread safe Arc pointers to share the single consumer
+        let receiver = Arc::new(Mutex::new(receiver));
+
+        // with_capacity is like Vec::new but pre-allocates space in the vector
         let mut workers = Vec::with_capacity(size);
 
         // Need to create threads
+        // Send the receiver to the workers
         for id in 0..size {
-            workers.push(Worker::new(id));
+            workers.push(Worker::new(id, Arc::clone(&receiver)));
         }
 
-
-        ThreadPool { threads: workers }
+        // save the sender in the ThreadPool
+        ThreadPool { workers, sender }
     }
 
+    /// To send a job from the ThreadPool to the Worker instances
     fn execute<F>(&self, f: F) where F: FnOnce() + Send + 'static {
         println!("handling connection");
     }
