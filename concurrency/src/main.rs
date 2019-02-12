@@ -6,11 +6,16 @@ fn main() {
     let handle = thread::spawn(|| {
         for x in 1..10{
             println!("number {} from spawned thread", x);
+            thread::sleep (Duration::from_millis(500))
         }
     });
 
     vec![1,2,3,4,5].into_iter()
-        .for_each(|x| println!("number {} from main thread", x));
+        .for_each(|x| {
+            println!("number {} from main thread", x);
+            thread::sleep (Duration::from_millis(700))
+        });
+
 
     // Block main thread until spawn thread finishes
     handle.join();
